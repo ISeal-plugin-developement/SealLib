@@ -1,0 +1,9 @@
+name: SealLib
+version: '1.0.0.0'
+main: dev.iseal.sealLib.SealLib
+api-version: '1.19'
+prefix: [ SealLib ]
+load: STARTUP
+authors: [ ISeal ]
+description: A library for ISeal's plugins!
+website: iseal.dev
