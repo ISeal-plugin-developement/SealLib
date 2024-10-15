@@ -1,0 +1,66 @@
+# This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
+# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
+
+name: Build and Release
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Java environment
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: temurin
+
+      - name: Set env variables
+        run: |
+          echo "VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+          echo "PRERELEASE=$(mvn help:evaluate -Dexpression=prerelease -q -DforceStdout)" >> $GITHUB_ENV
+          echo "EXECUTE=$(mvn help:evaluate -Dexpression=execute -q -DforceStdout)" >> $GITHUB_ENV
+
+      - name: Run Maven package
+        if: ${{ env.EXECUTE == 'true' }}
+        run: mvn clean package
+
+      - name: Create prerelease
+        if: ${{ env.EXECUTE == 'true' && env.PRERELEASE == 'true' }}
+        uses: ncipollo/release-action@v1
+        id: preRelease
+        with:
+          name: "v${{ env.VERSION }}"
+          artifacts: "target/output/*.jar"
+          commit: ${{ github.sha }}
+          tag: "${{ env.VERSION }}-${{ github.sha }}"
+          draft: false
+          prerelease: true
+          body: |
+            This release is automatically generated from commit ${{ github.sha }} and corresponds to version ${{ env.VERSION }} from pom.xml.
+            Changelog for this version: ${{ github.event.head_commit.message }}
+            !! THIS IS A PRERELEASE AND NOT FINAL !!
+
+      - name: Create release final
+        if: ${{ env.EXECUTE == 'true' && env.PRERELEASE == 'false' }}
+        uses: ncipollo/release-action@v1
+        id: finalRelease
+        with:
+          name: "v${{ env.VERSION }}"
+          artifacts: "target/output/*.jar"
+          commit: ${{ github.sha }}
+          tag: ${{ env.VERSION }}
+          draft: false
+          prerelease: false
+          body: |
+            This release is automatically generated from commit ${{ github.sha }} and corresponds to version ${{ env.VERSION }} from pom.xml.
+            Changelog for this version: ${{ github.event.head_commit.message }}
+            
