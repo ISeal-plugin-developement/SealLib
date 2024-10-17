@@ -64,7 +64,7 @@ public class ExceptionHandler {
 
     public void dumpAllClasses() {
         Set<Class<?>> dumpableClasses = new HashSet<>();
-        registeredPackages.forEach(pkg -> dumpableClasses.addAll(Utils.findAllClassesInPackage(pkg, Dumpable.class)));
+        registeredPackages.forEach(pkg -> dumpableClasses.addAll(GlobalUtils.findAllClassesInPackage(pkg, Dumpable.class)));
         HashMap<String, HashMap<String, Object>> dumpMap = new HashMap<>();
         dumpableClasses.forEach(clazz -> {
             try {
