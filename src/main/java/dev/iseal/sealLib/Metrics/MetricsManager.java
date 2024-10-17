@@ -13,6 +13,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
@@ -22,6 +23,7 @@ public class MetricsManager implements Listener {
     private final ArrayList<Consumer<Player>> joinMetrics = new ArrayList<>();
     private final ArrayList<Consumer<Player>> quitMetrics = new ArrayList<>();
     private final ArrayList<Consumer<Player>> shutdownMetrics = new ArrayList<>();
+    private final HashMap<String, String> infoToSendOnExit = new HashMap<>();
 
     private static MetricsManager instance = null;
     public static MetricsManager getInstance() {
@@ -42,6 +44,9 @@ public class MetricsManager implements Listener {
     }
     public void addMetrics(JavaPlugin plugin, int id) {
         metricsList.add(new Metrics(plugin, id));
+    }
+    public void addInfoToSendOnExit(String endpoint, String gson) {
+        infoToSendOnExit.put(endpoint, gson);
     }
 
     public void exitAndSendInfo() {
@@ -64,7 +69,13 @@ public class MetricsManager implements Listener {
             });
         });
 
+        infoToSendOnExit.forEach((endpoint, info) -> {
+            if (info == null) return;
+            ConnectionManager.getInstance().sendData(endpoint, info, "POST");
+        });
     }
+
+
 
     @EventHandler
     public void onLeave(PlayerQuitEvent e) {

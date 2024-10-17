@@ -16,16 +16,11 @@ public class ExceptionHandler {
     private static ExceptionHandler instance;
     private final Logger log = Bukkit.getLogger();
     private ArrayList<String> currentLog = new ArrayList<>();
-    private ArrayList<String> registeredPackages = new ArrayList<>();
 
     public static ExceptionHandler getInstance() {
         if (instance == null)
             instance = new ExceptionHandler();
         return instance;
-    }
-
-    public void registerPackage(String packageName) {
-        registeredPackages.add(packageName);
     }
 
     public void dealWithException(Exception ex, Level logLevel, String errorMessage, Object... moreInfo){
@@ -64,7 +59,8 @@ public class ExceptionHandler {
 
     public void dumpAllClasses() {
         Set<Class<?>> dumpableClasses = new HashSet<>();
-        registeredPackages.forEach(pkg -> dumpableClasses.addAll(GlobalUtils.findAllClassesInPackage(pkg, Dumpable.class)));
+        dumpableClasses.addAll(GlobalUtils.findAllClassesInPackage(StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
+                .getCallerClass().getPackageName(), Dumpable.class));
         HashMap<String, HashMap<String, Object>> dumpMap = new HashMap<>();
         dumpableClasses.forEach(clazz -> {
             try {
