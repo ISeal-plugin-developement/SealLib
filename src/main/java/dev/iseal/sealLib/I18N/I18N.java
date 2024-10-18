@@ -1,9 +1,7 @@
 package dev.iseal.sealLib.I18N;
 
 import dev.iseal.sealLib.Interfaces.Dumpable;
-import dev.iseal.sealLib.Utils.ExceptionHandler;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.reflections.Reflections;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,14 +9,13 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Level;
 
-public class I18NInitializer implements Dumpable {
+public class I18N implements Dumpable {
 
-    private static I18NInitializer instance;
-    public static I18NInitializer getInstance() {
+    private static I18N instance;
+    public static I18N getInstance() {
         if (instance == null) {
-            instance = new I18NInitializer();
+            instance = new I18N();
         }
         return instance;
     }

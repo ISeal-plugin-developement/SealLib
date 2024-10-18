@@ -22,7 +22,7 @@ public class MetricsManager implements Listener {
     private final ArrayList<Metrics> metricsList = new ArrayList<>();
     private final ArrayList<Consumer<Player>> joinMetrics = new ArrayList<>();
     private final ArrayList<Consumer<Player>> quitMetrics = new ArrayList<>();
-    private final ArrayList<Consumer<Player>> shutdownMetrics = new ArrayList<>();
+    private final ArrayList<Consumer<Void>> shutdownMetrics = new ArrayList<>();
     private final HashMap<String, String> infoToSendOnExit = new HashMap<>();
 
     private static MetricsManager instance = null;
@@ -39,7 +39,7 @@ public class MetricsManager implements Listener {
     public void addQuitMetrics(Consumer<Player> consumer) {
         quitMetrics.add(consumer);
     }
-    public void addShutdownMetrics(Consumer<Player> consumer) {
+    public void addShutdownMetrics(Consumer<Void> consumer) {
         shutdownMetrics.add(consumer);
     }
     public void addMetrics(JavaPlugin plugin, int id) {
@@ -51,24 +51,13 @@ public class MetricsManager implements Listener {
 
     public void exitAndSendInfo() {
         metricsList.forEach(Metrics::shutdown);
-
-        Bukkit.getServer().getOnlinePlayers().forEach(plr -> {
-            quitMetrics.forEach(consumer -> {
-                try {
-                    consumer.accept(plr);
-                } catch (Exception e) {
-                    ExceptionHandler.getInstance().dealWithException(e, Level.WARNING, "CALL_QUIT_METRICS_FAILED");
-                }
-            });
             shutdownMetrics.forEach(consumer -> {
                 try {
-                    consumer.accept(plr);
+                    consumer.accept(null);
                 } catch (Exception e) {
                     ExceptionHandler.getInstance().dealWithException(e, Level.WARNING, "CALL_SHUTDOWN_METRICS_FAILED");
                 }
             });
-        });
-
         infoToSendOnExit.forEach((endpoint, info) -> {
             if (info == null) return;
             ConnectionManager.getInstance().sendData(endpoint, info, "POST");
