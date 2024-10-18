@@ -2,6 +2,7 @@ package dev.iseal.sealLib.Utils;
 
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.RayTraceResult;
 import org.reflections.Reflections;
@@ -16,27 +17,27 @@ public class GlobalUtils {
         return (Set<Class<?>>) reflections.getSubTypesOf(clazz);
     }
 
-    public static Entity raycastPrecise(Player entity, double range) {
+    public static LivingEntity raycastPrecise(Player entity, double range) {
         RayTraceResult result = entity.getWorld().rayTraceEntities(
                 entity.getEyeLocation(),
                 entity.getEyeLocation().getDirection(),
                 range,
                 0.1,
-                (en) -> en.getEntityId() != entity.getEntityId()
+                (en) -> en.getEntityId() != entity.getEntityId() && en instanceof LivingEntity
         );
         if (result == null) return null;
-        return result.getHitEntity();
+        return (LivingEntity) result.getHitEntity();
     }
 
-    public static Entity raycastInaccurate(Player entity, double range) {
+    public static LivingEntity raycastInaccurate(Player entity, double range) {
         RayTraceResult result = entity.getWorld().rayTraceEntities(
                 entity.getEyeLocation(),
                 entity.getEyeLocation().getDirection(),
                 range,
                 1.5,
-                (en) -> en.getEntityId() != entity.getEntityId()
+                (en) -> en.getEntityId() != entity.getEntityId() && en instanceof LivingEntity
         );
-        if (result != null) return result.getHitEntity();
+        if (result != null) return (LivingEntity) result.getHitEntity();
         RayTraceResult result2 = entity.getWorld().rayTraceBlocks(
                 entity.getEyeLocation(),
                 entity.getEyeLocation().getDirection(),
@@ -45,9 +46,9 @@ public class GlobalUtils {
                 true
         );
         if (result2 == null) return null;
-        return entity.getWorld().getNearbyEntities(result2.getHitPosition().toLocation(entity.getWorld()), 1.5, 1.5, 1.5)
+        return (LivingEntity) entity.getWorld().getNearbyEntities(result2.getHitPosition().toLocation(entity.getWorld()), 1.5, 1.5, 1.5)
                 .stream()
-                .filter((en) -> en.getEntityId() != entity.getEntityId())
+                .filter((en) -> en.getEntityId() != entity.getEntityId() && en instanceof LivingEntity)
                 .min(Comparator.comparingDouble(en -> en.getLocation().distance(entity.getLocation())))
                 .orElse(null);
     }

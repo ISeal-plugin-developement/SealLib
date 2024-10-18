@@ -1,6 +1,7 @@
 package dev.iseal.sealLib.I18N;
 
 import dev.iseal.sealLib.Interfaces.Dumpable;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
@@ -59,7 +60,7 @@ public class I18N implements Dumpable {
             }
         }
 
-
+        Bukkit.getLogger().info("Loaded language file: " + fileName + " v" + resourceBundle.getString("BUNDLE_VERSION"));
 
         selectedBundles.put(mainClass.getPackageName(), resourceBundle);
     }
@@ -94,6 +95,10 @@ public class I18N implements Dumpable {
         } catch (MissingResourceException e) {
             return key;
         }
+    }
+
+    public static String translate(String key) {
+        return getTranslation(key);
     }
 
     @Override
