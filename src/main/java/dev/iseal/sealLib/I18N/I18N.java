@@ -3,10 +3,9 @@ package dev.iseal.sealLib.I18N;
 import dev.iseal.sealLib.Interfaces.Dumpable;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -23,24 +22,67 @@ public class I18N implements Dumpable {
     private static final HashMap<String, ResourceBundle> selectedBundles = new HashMap<>();
 
     public void setBundle(JavaPlugin plugin, String localeLang, String localeCountry) throws URISyntaxException, IOException {
-        AtomicReference<PropertyResourceBundle> resourceBundle = new AtomicReference<>();
+        PropertyResourceBundle resourceBundle = null;
         Class<?> mainClass = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
-        try (FileInputStream fis = new FileInputStream(plugin.getDataFolder() + "/languages/Messages_"+localeLang+"_"+localeCountry+".properties")) {
-            resourceBundle.set(new PropertyResourceBundle(fis));
-        } catch (FileNotFoundException e) {
-            ResourceWalker.walk(mainClass, "/languages", path -> {
-                if (path.toString().contains("Messages_"+localeLang+"_"+localeCountry+".properties")) {
-                    try (FileInputStream fis = new FileInputStream(path.toString())) {
-                        resourceBundle.set(new PropertyResourceBundle(fis));
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
+        String fileName = "Messages_" + localeLang + "_" + localeCountry + ".properties";
+        File dataFolder = plugin.getDataFolder();
+        File targetFile = new File(dataFolder, "languages/" + fileName);
+
+
+        if (targetFile.exists()) {
+            // Load the file from the data folder
+            PropertyResourceBundle oldResourceBundle = new PropertyResourceBundle(new FileInputStream(targetFile));
+            PropertyResourceBundle newResourceBundle;
+            try (InputStream resourceStream = mainClass.getResourceAsStream("/languages/" + fileName)) {
+                if (resourceStream == null) {
+                    throw new FileNotFoundException("Resource file not found: " + fileName);
                 }
-            });
+                newResourceBundle = new PropertyResourceBundle(resourceStream);
+            }
+
+            checkAndApplyUpdates(newResourceBundle, oldResourceBundle, targetFile);
+        } else {
+            // Create directories if they do not exist
+            targetFile.getParentFile().mkdirs();
+
+            // Copy the file from resources to the data folder
+            try (InputStream resourceStream = mainClass.getResourceAsStream("/languages/" + fileName)) {
+                if (resourceStream == null) {
+                    throw new FileNotFoundException("Resource file not found: " + fileName);
+                }
+                Files.copy(resourceStream, targetFile.toPath());
+            }
+            try (FileInputStream fis = new FileInputStream(targetFile)) {
+                resourceBundle = new PropertyResourceBundle(fis);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+
+
+        selectedBundles.put(mainClass.getPackageName(), resourceBundle);
+    }
+
+    private void checkAndApplyUpdates(PropertyResourceBundle newResourceBundle, PropertyResourceBundle oldResourceBundle, File targetFile) {
+        try {
+            int newVer = Integer.parseInt(newResourceBundle.getString("BUNDLE_VERSION"));
+            int oldVer = Integer.parseInt(oldResourceBundle.getString("BUNDLE_VERSION"));
+            if (newVer > oldVer) {
+                // update bundle
+                try (FileOutputStream fos = new FileOutputStream(targetFile)) {
+                    newResourceBundle.keySet().forEach(key -> {
+                        try {
+                            fos.write((key + "=" + newResourceBundle.getString(key) + "\n").getBytes());
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+                }
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        selectedBundles.put(mainClass.getPackageName(), resourceBundle.get());
     }
 
     public static String getTranslation(String key) {
