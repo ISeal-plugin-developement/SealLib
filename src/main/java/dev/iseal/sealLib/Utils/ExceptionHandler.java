@@ -2,6 +2,7 @@ package dev.iseal.sealLib.Utils;
 
 import dev.iseal.sealLib.Interfaces.Dumpable;
 import dev.iseal.sealLib.Metrics.MetricsManager;
+import dev.iseal.sealLib.SealLib;
 import org.bukkit.Bukkit;
 
 import java.lang.reflect.InvocationTargetException;
@@ -40,21 +41,16 @@ public class ExceptionHandler {
             i++;
         }
 
-        dumpAllClasses();
+        if (SealLib.isDebug())
+            dumpAllClasses();
+
         MetricsManager.getInstance().sendError(errorMessage, callingClass[1]);
         currentLog.forEach((str) -> log.log(logLevel, str));
     }
 
     private String[] getCallingClassName() {
-        StackTraceElement[] stElements = Thread.currentThread().getStackTrace();
-        for (int i=1; i<stElements.length; i++) {
-            StackTraceElement ste = stElements[i];
-            if (!ste.getClassName().equals(ExceptionHandler.class.getName()) && ste.getClassName().indexOf("java.lang.Thread")!=0) {
-                String classPackage = ste.getClass().getPackageName().split("\\.")[2];
-                return new String[]{ ste.getClassName(), classPackage };
-            }
-        }
-        return null;
+        Class<?> mainClass = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
+        return new String[]{mainClass.getPackageName(), mainClass.getPackageName().split("\\.")[1]};
     }
 
     public void dumpAllClasses() {

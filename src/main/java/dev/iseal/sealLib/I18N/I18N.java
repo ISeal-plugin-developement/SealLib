@@ -28,8 +28,20 @@ public class I18N implements Dumpable {
         String fileName = "Messages_" + localeLang + "_" + localeCountry + ".properties";
         File dataFolder = plugin.getDataFolder();
         File targetFile = new File(dataFolder, "languages/" + fileName);
-
-
+        System.out.println("hei");
+        System.out.println("hei");
+        System.out.println("hei");
+        System.out.println("hei");
+        System.out.println("hei");
+        System.out.println("hei");
+        System.out.println("hei");
+        System.out.println("hei");
+        System.out.println("hei");
+        System.out.println("hei");
+        System.out.println("hei");
+        System.out.println("hei");
+        System.out.println("hei");
+        System.out.println("hei");
         if (targetFile.exists()) {
             // Load the file from the data folder
             PropertyResourceBundle oldResourceBundle = new PropertyResourceBundle(new FileInputStream(targetFile));
@@ -39,12 +51,17 @@ public class I18N implements Dumpable {
                     throw new FileNotFoundException("Resource file not found: " + fileName);
                 }
                 newResourceBundle = new PropertyResourceBundle(resourceStream);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
+
+
 
             checkAndApplyUpdates(newResourceBundle, oldResourceBundle, targetFile);
         } else {
             // Create directories if they do not exist
             targetFile.getParentFile().mkdirs();
+            targetFile.createNewFile();
 
             // Copy the file from resources to the data folder
             try (InputStream resourceStream = mainClass.getResourceAsStream("/languages/" + fileName)) {
@@ -55,7 +72,8 @@ public class I18N implements Dumpable {
             }
             try (FileInputStream fis = new FileInputStream(targetFile)) {
                 resourceBundle = new PropertyResourceBundle(fis);
-            } catch (IOException e) {
+            } catch (FileNotFoundException e) {
+                System.out.println("File not found: " + targetFile.getAbsolutePath());
                 throw new RuntimeException(e);
             }
         }

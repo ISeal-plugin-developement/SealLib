@@ -1,3 +1,7 @@
 /.idea/
 /.idea/**
 SealLib.iml
+/target/**
+/target/
+/scripts/
+/scripts/**

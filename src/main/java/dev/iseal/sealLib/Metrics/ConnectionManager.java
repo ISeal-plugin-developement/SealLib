@@ -1,5 +1,6 @@
 package dev.iseal.sealLib.Metrics;
 
+import dev.iseal.sealLib.SealLib;
 import dev.iseal.sealLib.Utils.ExceptionHandler;
 import org.bukkit.Bukkit;
 
@@ -21,10 +22,14 @@ public class ConnectionManager {
     }
 
     public void sendData(String endpoint, String payload, String method) {
-        method = (method == null) ? "POST" : method;
-        if (Objects.equals(token, "-1"))
-            authenticate();
-        initConnection(endpoint, method, payload);
+        if (SealLib.isDebug()) {
+            System.out.println("Sending data to the API" + " " + endpoint + " " + payload + " " + method);
+        } else {
+            method = (method == null) ? "POST" : method;
+            if (Objects.equals(token, "-1"))
+                authenticate();
+            initConnection(endpoint, method, payload);
+        }
     }
 
     private void authenticate() {
