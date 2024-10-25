@@ -1,6 +1,5 @@
 package dev.iseal.sealLib.Metrics;
 
-import com.google.gson.Gson;
 import dev.iseal.sealLib.SealLib;
 import dev.iseal.sealLib.Utils.ExceptionHandler;
 import org.bukkit.Bukkit;
@@ -44,7 +43,7 @@ public class ConnectionManager {
     private String initConnection(String endpoint, String method, String payload) {
         try {
             // Creating a URL object
-            HttpURLConnection connection = getHttpsURLConnection(endpoint, method, payload, requiresAuth);
+            HttpURLConnection connection = getHttpsURLConnection(endpoint, method, payload);
 
             // Retrieving the response code
             int responseCode = connection.getResponseCode();
