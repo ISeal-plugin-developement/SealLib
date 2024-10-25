@@ -1,9 +1,11 @@
 package dev.iseal.sealLib.Metrics;
 
+import com.google.gson.Gson;
 import dev.iseal.sealLib.SealLib;
 import dev.iseal.sealLib.Utils.ExceptionHandler;
 import org.bukkit.Bukkit;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -21,14 +23,15 @@ public class ConnectionManager {
         return instance;
     }
 
-    public void sendData(String endpoint, String payload, String method) {
+    public String sendData(String endpoint, String payload, String method, boolean requiresAuth) {
         if (SealLib.isDebug()) {
-            System.out.println("Sending data to the API" + " " + endpoint + " " + payload + " " + method);
+            System.out.println("Sending data to the API" + " " + endpoint + " " + payload + " " + method + " " + requiresAuth);
+            return "DEBUG";
         } else {
             method = (method == null) ? "POST" : method;
-            if (Objects.equals(token, "-1"))
+            if (Objects.equals(token, "-1") && requiresAuth)
                 authenticate();
-            initConnection(endpoint, method, payload);
+            return initConnection(endpoint, method, payload);
         }
     }
 
@@ -41,7 +44,7 @@ public class ConnectionManager {
     private String initConnection(String endpoint, String method, String payload) {
         try {
             // Creating a URL object
-            HttpURLConnection connection = getHttpURLConnection(endpoint, method, payload);
+            HttpURLConnection connection = getHttpsURLConnection(endpoint, method, payload, requiresAuth);
 
             // Retrieving the response code
             int responseCode = connection.getResponseCode();
@@ -69,13 +72,13 @@ public class ConnectionManager {
         return null;
     }
 
-    private HttpURLConnection getHttpURLConnection(String endpoint, String method, String payload) throws IOException {
+    private HttpsURLConnection getHttpsURLConnection(String endpoint, String method, String payload) throws IOException {
         URL url = new URL("https://analytics.iseal.dev/api/v1/" + endpoint);
 
         Bukkit.getLogger().info("Connecting to API, this could take a few seconds if your internet is slow!");
 
         // Opening a connection
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 
         // Setting the timeout - 3 seconds so if server goes down again it doesn't take too long
         connection.setConnectTimeout(3000);

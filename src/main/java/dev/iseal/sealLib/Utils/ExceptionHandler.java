@@ -41,6 +41,8 @@ public class ExceptionHandler {
             i++;
         }
 
+        attemptToDealWithCustomException(ex);
+
         if (SealLib.isDebug())
             dumpAllClasses();
 
@@ -50,7 +52,7 @@ public class ExceptionHandler {
 
     private String[] getCallingClassName() {
         Class<?> mainClass = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
-        return new String[]{mainClass.getPackageName(), mainClass.getPackageName().split("\\.")[1]};
+        return new String[]{mainClass.getPackageName(), mainClass.getPackageName().split("\\.")[2]};
     }
 
     public void dumpAllClasses() {
@@ -101,4 +103,11 @@ public class ExceptionHandler {
             });
         });
     }
+
+    private void attemptToDealWithCustomException(Exception ex) {
+        if (ex instanceof SecurityException se) {
+            currentLog.add("[SealLib] SecurityException caught, what?");
+        }
+    }
+
 }

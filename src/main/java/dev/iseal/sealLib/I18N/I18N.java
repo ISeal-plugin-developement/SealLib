@@ -2,13 +2,17 @@ package dev.iseal.sealLib.I18N;
 
 import dev.iseal.sealLib.Interfaces.Dumpable;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
 
 public class I18N implements Dumpable {
 
@@ -22,65 +26,62 @@ public class I18N implements Dumpable {
 
     private static final HashMap<String, ResourceBundle> selectedBundles = new HashMap<>();
 
-    public void setBundle(JavaPlugin plugin, String localeLang, String localeCountry) throws URISyntaxException, IOException {
+    public void setBundle(JavaPlugin plugin, String localeLang, String localeCountry) throws IOException {
+        Logger logger = Bukkit.getLogger();
         PropertyResourceBundle resourceBundle = null;
         Class<?> mainClass = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
         String fileName = "Messages_" + localeLang + "_" + localeCountry + ".properties";
+        logger.info("[SealLib] File name constructed: " + fileName);
         File dataFolder = plugin.getDataFolder();
         File targetFile = new File(dataFolder, "languages/" + fileName);
-        System.out.println("hei");
-        System.out.println("hei");
-        System.out.println("hei");
-        System.out.println("hei");
-        System.out.println("hei");
-        System.out.println("hei");
-        System.out.println("hei");
-        System.out.println("hei");
-        System.out.println("hei");
-        System.out.println("hei");
-        System.out.println("hei");
-        System.out.println("hei");
-        System.out.println("hei");
-        System.out.println("hei");
+        logger.info("[SealLib] Target file path: " + targetFile.getAbsolutePath());
+
         if (targetFile.exists()) {
-            // Load the file from the data folder
-            PropertyResourceBundle oldResourceBundle = new PropertyResourceBundle(new FileInputStream(targetFile));
+            logger.info("[SealLib] Target file exists, loading from data folder");
+            PropertyResourceBundle oldResourceBundle;
+            try (InputStreamReader reader = new InputStreamReader(new FileInputStream(targetFile), StandardCharsets.UTF_8)) {
+                oldResourceBundle = new PropertyResourceBundle(reader);
+            }
             PropertyResourceBundle newResourceBundle;
-            try (InputStream resourceStream = mainClass.getResourceAsStream("/languages/" + fileName)) {
+            try (InputStream resourceStream = mainClass.getResourceAsStream("/languages/" + fileName);
+                 InputStreamReader reader = new InputStreamReader(resourceStream, StandardCharsets.UTF_8)) {
                 if (resourceStream == null) {
+                    logger.severe("[SealLib] Resource file not found: " + fileName);
                     throw new FileNotFoundException("Resource file not found: " + fileName);
                 }
-                newResourceBundle = new PropertyResourceBundle(resourceStream);
+                newResourceBundle = new PropertyResourceBundle(reader);
             } catch (Exception e) {
+                logger.severe("[SealLib] Exception while loading resource file: " + e.getMessage());
                 throw new RuntimeException(e);
             }
 
-
-
+            logger.info("[SealLib] Checking and applying updates if necessary");
             checkAndApplyUpdates(newResourceBundle, oldResourceBundle, targetFile);
+            resourceBundle = new PropertyResourceBundle(new FileInputStream(targetFile));
         } else {
-            // Create directories if they do not exist
+            logger.info("[SealLib] Target file does not exist, creating directories and new file");
             targetFile.getParentFile().mkdirs();
             targetFile.createNewFile();
 
-            // Copy the file from resources to the data folder
+            logger.info("[SealLib] Copying file from resources to data folder");
             try (InputStream resourceStream = mainClass.getResourceAsStream("/languages/" + fileName)) {
                 if (resourceStream == null) {
+                    logger.severe("[SealLib] Resource file not found: " + fileName);
                     throw new FileNotFoundException("Resource file not found: " + fileName);
                 }
-                Files.copy(resourceStream, targetFile.toPath());
+                Files.copy(resourceStream, targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
-            try (FileInputStream fis = new FileInputStream(targetFile)) {
-                resourceBundle = new PropertyResourceBundle(fis);
+            logger.info("[SealLib] Loading resource bundle from new file");
+            try (InputStreamReader reader = new InputStreamReader(new FileInputStream(targetFile), StandardCharsets.UTF_8)) {
+                resourceBundle = new PropertyResourceBundle(reader);
             } catch (FileNotFoundException e) {
-                System.out.println("File not found: " + targetFile.getAbsolutePath());
+                logger.severe("[SealLib] File not found: " + targetFile.getAbsolutePath());
                 throw new RuntimeException(e);
             }
         }
 
-        Bukkit.getLogger().info("Loaded language file: " + fileName + " v" + resourceBundle.getString("BUNDLE_VERSION"));
-
-        selectedBundles.put(mainClass.getPackageName(), resourceBundle);
+        logger.info("[SealLib] Loaded language file: " + fileName + " v" + resourceBundle.getString("BUNDLE_VERSION"));
+        selectedBundles.put(mainClass.getPackageName().split("\\.")[2], resourceBundle);
     }
 
     private void checkAndApplyUpdates(PropertyResourceBundle newResourceBundle, PropertyResourceBundle oldResourceBundle, File targetFile) {
@@ -89,10 +90,10 @@ public class I18N implements Dumpable {
             int oldVer = Integer.parseInt(oldResourceBundle.getString("BUNDLE_VERSION"));
             if (newVer > oldVer) {
                 // update bundle
-                try (FileOutputStream fos = new FileOutputStream(targetFile)) {
+                try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(targetFile), StandardCharsets.UTF_8)) {
                     newResourceBundle.keySet().forEach(key -> {
                         try {
-                            fos.write((key + "=" + newResourceBundle.getString(key) + "\n").getBytes());
+                            writer.write(key + "=" + newResourceBundle.getString(key) + "\n");
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
@@ -106,17 +107,24 @@ public class I18N implements Dumpable {
 
     public static String getTranslation(String key) {
         try {
-            return selectedBundles
-                    .get(StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
-                            .getCallerClass().getPackageName())
-                    .getString(key);
+            return ChatColor.translateAlternateColorCodes('&',
+                    selectedBundles.get(StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
+                            .getCallerClass().getPackageName().split("\\.")[2])
+                    .getString(key));
         } catch (MissingResourceException e) {
             return key;
         }
     }
 
     public static String translate(String key) {
-        return getTranslation(key);
+        try {
+            return ChatColor.translateAlternateColorCodes('&',
+                    selectedBundles.get(StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
+                            .getCallerClass().getPackageName().split("\\.")[2])
+                    .getString(key));
+        } catch (MissingResourceException | NullPointerException e) {
+            return key;
+        }
     }
 
     @Override

@@ -13,8 +13,11 @@ import java.util.Set;
 public class GlobalUtils {
 
     public static Set<Class<?>> findAllClassesInPackage(String packageName, Class<?> clazz) {
+        Thread.currentThread().setContextClassLoader(clazz.getClassLoader());
         Reflections reflections = new Reflections(packageName);
-        return (Set<Class<?>>) reflections.getSubTypesOf(clazz);
+        Set<Class<?>> classes = (Set<Class<?>>) reflections.getSubTypesOf(clazz);
+        Thread.currentThread().setContextClassLoader(GlobalUtils.class.getClassLoader());
+        return classes;
     }
 
     public static LivingEntity raycastPrecise(Player entity, double range) {

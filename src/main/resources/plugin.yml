@@ -1,8 +1,8 @@
 name: SealLib
-version: '1.0.0.0'
+version: '${project.version}'
 main: dev.iseal.sealLib.SealLib
 api-version: '1.19'
-prefix: [ SealLib ]
+prefix: SealLib
 load: STARTUP
 authors: [ ISeal ]
 description: A library for ISeal's plugins!
