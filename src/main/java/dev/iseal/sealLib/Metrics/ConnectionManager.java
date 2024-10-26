@@ -48,7 +48,8 @@ public class ConnectionManager {
             // Retrieving the response code
             int responseCode = connection.getResponseCode();
 
-            Bukkit.getLogger().info("Connected!");
+            if (SealLib.isDebug())
+                System.out.println("Response code: " + responseCode);
 
             // Processing the response
             if (responseCode == HttpURLConnection.HTTP_OK) {
@@ -74,7 +75,8 @@ public class ConnectionManager {
     private HttpsURLConnection getHttpsURLConnection(String endpoint, String method, String payload) throws IOException {
         URL url = new URL("https://analytics.iseal.dev/api/v1/" + endpoint);
 
-        Bukkit.getLogger().info("Connecting to API, this could take a few seconds if your internet is slow!");
+        if (SealLib.isDebug())
+            System.out.println("Connecting to " + url);
 
         // Opening a connection
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
@@ -93,7 +95,7 @@ public class ConnectionManager {
             // Setting the content type
             connection.setRequestProperty("Content-Type", "application/json");
 
-        if (!payload.equals("")) {
+        if (!payload.isEmpty()) {
             // Allowing output
             connection.setDoOutput(true);
             // Send request body

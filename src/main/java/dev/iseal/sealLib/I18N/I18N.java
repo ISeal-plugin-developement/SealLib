@@ -14,6 +14,8 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
+import static dev.iseal.sealLib.SealLib.isDebug;
+
 public class I18N implements Dumpable {
 
     private static I18N instance;
@@ -26,60 +28,84 @@ public class I18N implements Dumpable {
 
     private static final HashMap<String, ResourceBundle> selectedBundles = new HashMap<>();
 
+    private void unpackAllLanguages(JavaPlugin plugin) throws URISyntaxException, IOException {
+        Logger logger = Bukkit.getLogger();
+        ResourceWalker.getInstance().walk(plugin.getClass(), "languages", (inputStream, fileName) -> {
+            File dataFolder = plugin.getDataFolder();
+            File targetFile = new File(dataFolder, "languages/" + fileName);
+            if (isDebug())
+                logger.info("[SealLib] Processing language file: " + fileName);
+
+            if (targetFile.exists()) {
+                if (isDebug())
+                    logger.info("[SealLib] Target file exists, checking for updates");
+                PropertyResourceBundle oldResourceBundle;
+                try (InputStreamReader reader = new InputStreamReader(new FileInputStream(targetFile), StandardCharsets.UTF_8)) {
+                    oldResourceBundle = new PropertyResourceBundle(reader);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                PropertyResourceBundle newResourceBundle;
+                try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
+                    newResourceBundle = new PropertyResourceBundle(reader);
+                } catch (Exception e) {
+                    logger.severe("[SealLib] Exception while loading resource file: " + e.getMessage());
+                    throw new RuntimeException(e);
+                }
+
+                checkAndApplyUpdates(newResourceBundle, oldResourceBundle, targetFile);
+            } else {
+                if (isDebug())
+                    logger.info("[SealLib] Target file for "+fileName+" does not exist, creating directories and new file");
+                try {
+                    targetFile.getParentFile().mkdirs();
+                    targetFile.createNewFile();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                if (isDebug())
+                    logger.info("[SealLib] Copying file from resources to data folder");
+                try {
+                    Files.copy(inputStream, targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                if (isDebug())
+                    logger.info("[SealLib] File copied successfully");
+            }
+        });
+    }
+
     public void setBundle(JavaPlugin plugin, String localeLang, String localeCountry) throws IOException {
         Logger logger = Bukkit.getLogger();
         PropertyResourceBundle resourceBundle = null;
+
+        // unpack all languages and check updates
+        try {
+            unpackAllLanguages(plugin);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
+        // get caller class
         Class<?> mainClass = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
         String fileName = "Messages_" + localeLang + "_" + localeCountry + ".properties";
         logger.info("[SealLib] File name constructed: " + fileName);
+
+        // make file object
         File dataFolder = plugin.getDataFolder();
         File targetFile = new File(dataFolder, "languages/" + fileName);
-        logger.info("[SealLib] Target file path: " + targetFile.getAbsolutePath());
 
-        if (targetFile.exists()) {
-            logger.info("[SealLib] Target file exists, loading from data folder");
-            PropertyResourceBundle oldResourceBundle;
-            try (InputStreamReader reader = new InputStreamReader(new FileInputStream(targetFile), StandardCharsets.UTF_8)) {
-                oldResourceBundle = new PropertyResourceBundle(reader);
-            }
-            PropertyResourceBundle newResourceBundle;
-            try (InputStream resourceStream = mainClass.getResourceAsStream("/languages/" + fileName);
-                 InputStreamReader reader = new InputStreamReader(resourceStream, StandardCharsets.UTF_8)) {
-                if (resourceStream == null) {
-                    logger.severe("[SealLib] Resource file not found: " + fileName);
-                    throw new FileNotFoundException("Resource file not found: " + fileName);
-                }
-                newResourceBundle = new PropertyResourceBundle(reader);
-            } catch (Exception e) {
-                logger.severe("[SealLib] Exception while loading resource file: " + e.getMessage());
-                throw new RuntimeException(e);
-            }
-
-            logger.info("[SealLib] Checking and applying updates if necessary");
-            checkAndApplyUpdates(newResourceBundle, oldResourceBundle, targetFile);
-            resourceBundle = new PropertyResourceBundle(new FileInputStream(targetFile));
-        } else {
-            logger.info("[SealLib] Target file does not exist, creating directories and new file");
-            targetFile.getParentFile().mkdirs();
-            targetFile.createNewFile();
-
-            logger.info("[SealLib] Copying file from resources to data folder");
-            try (InputStream resourceStream = mainClass.getResourceAsStream("/languages/" + fileName)) {
-                if (resourceStream == null) {
-                    logger.severe("[SealLib] Resource file not found: " + fileName);
-                    throw new FileNotFoundException("Resource file not found: " + fileName);
-                }
-                Files.copy(resourceStream, targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            }
-            logger.info("[SealLib] Loading resource bundle from new file");
-            try (InputStreamReader reader = new InputStreamReader(new FileInputStream(targetFile), StandardCharsets.UTF_8)) {
-                resourceBundle = new PropertyResourceBundle(reader);
-            } catch (FileNotFoundException e) {
-                logger.severe("[SealLib] File not found: " + targetFile.getAbsolutePath());
-                throw new RuntimeException(e);
-            }
+        if (!targetFile.exists()) {
+            logger.severe("[SealLib] Target file does not exist, loading default en_US file");
+            fileName = "Messages_en_US.properties";
+            targetFile = new File(dataFolder, "languages/" + fileName);
         }
 
+        logger.info("[SealLib] Target file path: " + targetFile.getAbsolutePath());
+
+        resourceBundle = new PropertyResourceBundle(new FileInputStream(targetFile));
         logger.info("[SealLib] Loaded language file: " + fileName + " v" + resourceBundle.getString("BUNDLE_VERSION"));
         selectedBundles.put(mainClass.getPackageName().split("\\.")[2], resourceBundle);
     }

@@ -46,7 +46,8 @@ public class ExceptionHandler {
         if (SealLib.isDebug())
             dumpAllClasses();
 
-        MetricsManager.getInstance().sendError(errorMessage, callingClass[1]);
+        if (logLevel == Level.SEVERE)
+            MetricsManager.getInstance().sendError(errorMessage, callingClass[1]);
         currentLog.forEach((str) -> log.log(logLevel, str));
     }
 

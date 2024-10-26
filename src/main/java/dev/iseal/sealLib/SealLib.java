@@ -6,6 +6,9 @@ import dev.iseal.sealLib.Utils.ExceptionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public final class SealLib extends JavaPlugin {
 
     private final Config config = new Config("config", this.getDataFolder().getPath()+"/config/");
@@ -16,6 +19,8 @@ public final class SealLib extends JavaPlugin {
         // Plugin startup logic
         Bukkit.getServer().getPluginManager().registerEvents(MetricsManager.getInstance(), this);
         debug = config.getOrSetDefault("debug", false);
+        Logger logger = Bukkit.getLogger();
+        logger.info("info");
     }
 
     @Override
