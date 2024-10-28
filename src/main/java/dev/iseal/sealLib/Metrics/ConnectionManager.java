@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -43,7 +42,7 @@ public class ConnectionManager {
     private String initConnection(String endpoint, String method, String payload) {
         try {
             // Creating a URL object
-            HttpURLConnection connection = getHttpsURLConnection(endpoint, method, payload);
+            HttpsURLConnection connection = getHttpsURLConnection(endpoint, method, payload);
 
             // Retrieving the response code
             int responseCode = connection.getResponseCode();
@@ -52,7 +51,7 @@ public class ConnectionManager {
                 System.out.println("Response code: " + responseCode);
 
             // Processing the response
-            if (responseCode == HttpURLConnection.HTTP_OK) {
+            if (responseCode == HttpsURLConnection.HTTP_OK) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String inputLine;
                 StringBuilder response = new StringBuilder();

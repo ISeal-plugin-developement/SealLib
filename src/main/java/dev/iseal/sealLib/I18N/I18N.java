@@ -91,7 +91,8 @@ public class I18N implements Dumpable {
         // get caller class
         Class<?> mainClass = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
         String fileName = "Messages_" + localeLang + "_" + localeCountry + ".properties";
-        logger.info("[SealLib] File name constructed: " + fileName);
+        if (isDebug())
+            logger.info("[SealLib] File name constructed: " + fileName);
 
         // make file object
         File dataFolder = plugin.getDataFolder();

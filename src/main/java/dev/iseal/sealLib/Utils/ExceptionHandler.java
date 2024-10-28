@@ -26,8 +26,8 @@ public class ExceptionHandler {
 
     public void dealWithException(Exception ex, Level logLevel, String errorMessage, Object... moreInfo){
         currentLog = new ArrayList<>();
-        String[] callingClass = getCallingClassName();
-        currentLog.add( "[SealLib] "+"Exception triggered by "+callingClass[0]);
+        Class<?> mainClass = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
+        currentLog.add( "[SealLib] "+"Exception triggered by "+mainClass.getPackageName());
         currentLog.add( "[SealLib] "+"The exception message is "+ex.getMessage());
         currentLog.add( "[SealLib] "+"The error message is "+errorMessage);
         currentLog.add("[SealLib] "+"The stacktrace and all of its details known are as follows: ");
@@ -44,22 +44,16 @@ public class ExceptionHandler {
         attemptToDealWithCustomException(ex);
 
         if (SealLib.isDebug())
-            dumpAllClasses();
+            dumpAllClasses(mainClass);
 
         if (logLevel == Level.SEVERE)
-            MetricsManager.getInstance().sendError(errorMessage, callingClass[1]);
+            MetricsManager.getInstance().sendError(errorMessage, mainClass.getPackageName().split("\\.")[2]);
         currentLog.forEach((str) -> log.log(logLevel, str));
     }
 
-    private String[] getCallingClassName() {
-        Class<?> mainClass = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
-        return new String[]{mainClass.getPackageName(), mainClass.getPackageName().split("\\.")[2]};
-    }
-
-    public void dumpAllClasses() {
+    public void dumpAllClasses(Class<?> caller) {
         Set<Class<?>> dumpableClasses = new HashSet<>();
-        dumpableClasses.addAll(GlobalUtils.findAllClassesInPackage(StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
-                .getCallerClass().getPackageName(), Dumpable.class));
+        dumpableClasses.addAll(GlobalUtils.findAllClassesInPackage(caller.getPackageName(), Dumpable.class));
         HashMap<String, HashMap<String, Object>> dumpMap = new HashMap<>();
         dumpableClasses.forEach(clazz -> {
             try {

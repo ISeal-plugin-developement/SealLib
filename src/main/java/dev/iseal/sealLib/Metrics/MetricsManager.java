@@ -90,6 +90,6 @@ public class MetricsManager implements Listener {
 
     public void sendError(String errorMessage, String packageName) {
         Gson gson = new Gson();
-        ConnectionManager.getInstance().sendData(packageName+"errorcodes", gson.toJson(errorMessage), "POST", true);
+        ConnectionManager.getInstance().sendData(packageName+"/errorcodes", gson.toJson(errorMessage), "POST", true);
     }
 }
