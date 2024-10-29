@@ -6,7 +6,7 @@
 
     <groupId>dev.iseal</groupId>
     <artifactId>SealLib</artifactId>
-    <version>1.0.0.1</version>
+    <version>1.0.0.1-DEV1</version>
     <packaging>jar</packaging>
 
     <name>SealLib</name>

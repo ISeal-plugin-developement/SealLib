@@ -3,13 +3,11 @@ package dev.iseal.sealLib.Metrics;
 import com.google.gson.Gson;
 import dev.iseal.sealLib.Utils.ExceptionHandler;
 import org.bstats.bukkit.Metrics;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -60,7 +58,7 @@ public class MetricsManager implements Listener {
             });
         infoToSendOnExit.forEach((endpoint, info) -> {
             if (info == null) return;
-            ConnectionManager.getInstance().sendData(endpoint, info, "POST", true);
+            ConnectionManager.getInstance().sendDataToAPI(endpoint, info, "POST", true);
         });
     }
 
@@ -90,6 +88,6 @@ public class MetricsManager implements Listener {
 
     public void sendError(String errorMessage, String packageName) {
         Gson gson = new Gson();
-        ConnectionManager.getInstance().sendData(packageName+"/errorcodes", gson.toJson(errorMessage), "POST", true);
+        ConnectionManager.getInstance().sendDataToAPI(packageName+"/errorcodes", gson.toJson(errorMessage), "POST", true);
     }
 }
