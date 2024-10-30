@@ -2,16 +2,19 @@ package dev.iseal.sealLib.Metrics;
 
 import dev.iseal.sealLib.SealLib;
 import dev.iseal.sealLib.Utils.ExceptionHandler;
+import org.bukkit.Bukkit;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.URL;
 import java.util.Objects;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ConnectionManager {
 
     private String token = "-1";
+    private final Logger l = Bukkit.getLogger();
 
     private static ConnectionManager instance;
     public static ConnectionManager getInstance() {
@@ -26,7 +29,7 @@ public class ConnectionManager {
 
     public String sendDataToAPI(String endpoint, String payload, String method, boolean requiresAuth) {
         if (SealLib.isDebug()) {
-            System.out.println("Sending data to the API" + " " + endpoint + " " + payload + " " + method + " " + requiresAuth);
+            l.info("[SealLib] Sending data to the API" + " " + endpoint + " " + payload + " " + method + " " + requiresAuth);
             return "DEBUG";
         } else {
             method = (method == null) ? "POST" : method;
@@ -59,7 +62,7 @@ public class ConnectionManager {
             int responseCode = connection.getResponseCode();
 
             if (SealLib.isDebug())
-                System.out.println("Response code: " + responseCode);
+                l.info("[SealLib] Response code: " + responseCode);
 
             // Processing the response
             if (responseCode == HttpsURLConnection.HTTP_OK) {
@@ -87,7 +90,7 @@ public class ConnectionManager {
         URL url = new URL(endpoint);
 
         if (SealLib.isDebug())
-            System.out.println("Connecting to " + url);
+            l.info("[SealLib] Connecting to " + url);
 
         // Opening a connection
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();

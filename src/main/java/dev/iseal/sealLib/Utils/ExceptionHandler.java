@@ -52,6 +52,10 @@ public class ExceptionHandler {
     }
 
     public void dumpAllClasses(Class<?> caller) {
+        if (caller == null) {
+            caller = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
+        }
+
         Set<Class<?>> dumpableClasses = new HashSet<>();
         dumpableClasses.addAll(GlobalUtils.findAllClassesInPackage(caller.getPackageName(), Dumpable.class));
         HashMap<String, HashMap<String, Object>> dumpMap = new HashMap<>();
