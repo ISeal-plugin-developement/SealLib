@@ -2,6 +2,7 @@ package dev.iseal.sealLib.Utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class SoundHelper {
@@ -28,9 +29,13 @@ public class SoundHelper {
         loc.getWorld().playSound(loc, namespace + ":" + sound, 10^20, pitch);
     }
 
-    public static void playSoundAroundEntity(String namespace, String sound, float pitch, Location loc) {
+    public static void playSoundAroundLocation(String namespace, String sound, float pitch, Location loc) {
         // Play sound
         loc.getWorld().playSound(loc, namespace + ":" + sound, 3, pitch);
+    }
+
+    public static void playSoundAroundEntity(String namespace, String sound, float pitch, Entity entity) {
+        playSoundAroundLocation(namespace, sound, pitch, entity.getLocation());
     }
 
 }
