@@ -2,7 +2,7 @@
 name: Bug report
 about: Create a bug report
 title: "[BUG] Brief bug description"
-labels: bug
+labels: bug, awaiting testing
 assignees: ''
 
 ---
@@ -28,10 +28,6 @@ If applicable, add screenshots to help explain your problem.
  - Server software: [e.g. Paper]
  - Plugin version: [e.g. 3.0.0.0]
  - Server logs ( in a [gist](https://gist.github.com/) )
-
-**Plugin output:**
- - Output of /d dump ( in a [gist](https://gist.github.com/) )
- - Addons loaded: ( none if there aren't any)
 
 **Additional context**
 Add any other context about the problem here.
