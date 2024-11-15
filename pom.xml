@@ -6,7 +6,7 @@
 
     <groupId>dev.iseal</groupId>
     <artifactId>SealLib</artifactId>
-    <version>1.0.2.0-DEV3</version>
+    <version>1.0.2.0-DEV4</version>
     <packaging>jar</packaging>
 
     <name>SealLib</name>
@@ -92,6 +92,12 @@
             <groupId>com.github.simplix-softworks</groupId>
             <artifactId>simplixstorage</artifactId>
             <version>3.2.7</version>
+        </dependency>
+        <dependency>
+            <groupId>de.javagl</groupId>
+            <artifactId>obj</artifactId>
+            <version>0.4.0</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>

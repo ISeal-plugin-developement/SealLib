@@ -1,4 +1,4 @@
-package dev.iseal.sealLib.Utils;
+package dev.iseal.sealLib.Helpers;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

@@ -1,6 +1,7 @@
-package dev.iseal.sealLib.Utils;
+package dev.iseal.sealLib.Helpers;
 
 import dev.iseal.sealLib.SealLib;
+import dev.iseal.sealLib.Utils.ExceptionHandler;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
 

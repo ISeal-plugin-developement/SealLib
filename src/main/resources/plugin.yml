@@ -7,3 +7,13 @@ load: STARTUP
 authors: [ ISeal ]
 description: A library for ISeal's plugins!
 website: iseal.dev
+commands:
+  debug:
+    description: Debug command
+    usage: /<command>
+    permission: seallib.debug
+    aliases: [d]
+permissions:
+  seallib.debug:
+    description: Debug permission
+    default: op

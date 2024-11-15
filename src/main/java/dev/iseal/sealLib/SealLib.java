@@ -1,11 +1,10 @@
 package dev.iseal.sealLib;
 
 import de.leonhard.storage.Config;
+import dev.iseal.sealLib.Commands.DebugCommand;
 import dev.iseal.sealLib.Metrics.MetricsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.logging.Logger;
 
 public final class SealLib extends JavaPlugin {
 
@@ -19,8 +18,8 @@ public final class SealLib extends JavaPlugin {
         plugin = this;
         Bukkit.getServer().getPluginManager().registerEvents(MetricsManager.getInstance(), this);
         debug = config.getOrSetDefault("debug", false);
-        Logger logger = Bukkit.getLogger();
-        logger.info("info");
+        if (debug)
+            Bukkit.getPluginCommand("debug").setExecutor(new DebugCommand());
     }
 
     @Override
