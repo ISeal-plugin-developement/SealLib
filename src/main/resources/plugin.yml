@@ -5,6 +5,7 @@ api-version: '1.19'
 prefix: SealLib
 load: STARTUP
 authors: [ ISeal ]
+soft-depend: [ProtocolLib]
 description: A library for ISeal's plugins!
 website: iseal.dev
 commands:
@@ -17,3 +18,8 @@ permissions:
   seallib.debug:
     description: Debug permission
     default: op
+libraries:
+  - com.esotericsoftware.kryo:kryo5:5.6.2
+  - io.netty:netty-buffer:5.0.0.Alpha2
+  - org.reflections:reflections:0.10.2
+  - de.javagl:obj:0.4.0

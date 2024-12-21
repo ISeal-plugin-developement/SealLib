@@ -1,13 +1,7 @@
-package dev.iseal.sealLib.I18N;
+package dev.iseal.sealLib.Systems.I18N;
 
 import dev.iseal.sealLib.Utils.ExceptionHandler;
-import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
-import org.reflections.scanners.Scanners;
-import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -15,18 +9,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.*;
 import java.util.Collections;
-import java.util.Iterator;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
-
-import static java.nio.file.FileSystems.getDefault;
-import static java.nio.file.FileSystems.newFileSystem;
-import static java.util.Collections.emptyMap;
 
 public class ResourceWalker {
 

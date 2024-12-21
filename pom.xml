@@ -6,7 +6,7 @@
 
     <groupId>dev.iseal</groupId>
     <artifactId>SealLib</artifactId>
-    <version>1.0.2.0-DEV4</version>
+    <version>1.0.2.0-DEV7</version>
     <packaging>jar</packaging>
 
     <name>SealLib</name>
@@ -74,9 +74,45 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+        <repository>
+            <id>dmulloy2-repo</id>
+            <url>https://repo.dmulloy2.net/repository/public/</url>
+        </repository>
+        <repository>
+            <id>curios</id>
+            <url>https://maven.theillusivec4.top/</url>
+        </repository>
+        <repository>
+            <id>blamejared</id>
+            <url>https://maven.blamejared.com/</url>
+        </repository>
     </repositories>
 
     <dependencies>
+        <!--
+        <dependency>
+            <groupId>com.esotericsoftware.kryo</groupId>
+            <artifactId>kryo5</artifactId>
+            <version>5.6.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>team.lodestar.lodestone</groupId>
+            <artifactId>lodestone</artifactId>
+            <version>1.20.1-1.6.2.3c-fabric</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>-->
+        <dependency>
+            <groupId>com.comphenix.protocol</groupId>
+            <artifactId>ProtocolLib</artifactId>
+            <version>4.7.0</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
@@ -87,17 +123,24 @@
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <version>0.10.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.simplix-softworks</groupId>
-            <artifactId>simplixstorage</artifactId>
-            <version>3.2.7</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>de.javagl</groupId>
             <artifactId>obj</artifactId>
             <version>0.4.0</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-buffer</artifactId>
+            <version>5.0.0.Alpha2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.simplix-softworks</groupId>
+            <artifactId>simplixstorage</artifactId>
+            <version>3.2.7</version>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>

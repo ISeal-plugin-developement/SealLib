@@ -1,4 +1,4 @@
-package dev.iseal.sealLib.I18N;
+package dev.iseal.sealLib.Systems.I18N;
 
 import dev.iseal.sealLib.Interfaces.Dumpable;
 import org.bukkit.Bukkit;
@@ -11,7 +11,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
 import static dev.iseal.sealLib.SealLib.isDebug;
