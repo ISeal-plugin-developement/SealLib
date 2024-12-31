@@ -89,10 +89,15 @@
     </repositories>
 
     <dependencies>
-        <dependency>
+        <!--<dependency>
             <groupId>dev.iseal</groupId>
             <artifactId>ExtraKryoCodecs</artifactId>
             <version>1.0.0.0-DEV16</version>
+        </dependency>-->
+        <dependency>
+            <groupId>com.github.ISeal-plugin-developement</groupId>
+            <artifactId>ExtraKryoCodecs</artifactId>
+            <version>master-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>team.lodestar.lodestone</groupId>
