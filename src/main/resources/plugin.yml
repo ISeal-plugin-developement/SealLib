@@ -5,7 +5,7 @@ api-version: '1.19'
 prefix: SealLib
 load: STARTUP
 authors: [ ISeal ]
-soft-depend: [ProtocolLib]
+soft-depend: [ ProtocolLib ]
 description: A library for ISeal's plugins!
 website: iseal.dev
 commands:

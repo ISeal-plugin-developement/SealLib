@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
@@ -53,18 +54,32 @@ public class CustomPacketSender {
             // Terrible practice, but I cannot be bothered to make a decent serializer for this
             byte[] tempArray = UnsafeSerializer.serialize(extraData);
 
+            if (SealLib.isDebug())
+                SealLib.getPlugin().getLogger().info("Sending packet with extra data size: " + tempArray.length);
+
             // write the size of the extra data, ignore tempArray if it's empty
             if (tempArray.length > 0) {
-                dataOutputStream.writeInt(tempArray.length+packet.length);
+                dataOutputStream.writeInt(tempArray.length+packet.length+4);
             } else {
-                dataOutputStream.writeInt(packet.length);
+                dataOutputStream.writeInt(packet.length+4);
             }
+
+            if (SealLib.isDebug())
+                SealLib.getPlugin().getLogger().info("Sending packet with total size: " + (packet.length+tempArray.length));
 
             // write the actual data
             dataOutputStream.write(tempArray);
             dataOutputStream.write(packet);
             dataOutputStream.flush();
+            dataOutputStream.close();
             customPayload.setContents(finalOutputStream.toByteArray());
+            if (SealLib.isDebug()) {
+                SealLib.getPlugin().getLogger().info("Extra data: " + Arrays.toString(tempArray));
+                SealLib.getPlugin().getLogger().info("Packet data: " + Arrays.toString(packet));
+                SealLib.getPlugin().getLogger().info("Final packet: " + Arrays.toString(finalOutputStream.toByteArray()));
+            }
+            if (SealLib.isDebug())
+                SealLib.getPlugin().getLogger().info("Sending packet with size: " + finalOutputStream.toByteArray().length);
         } catch (Exception e) {
             throw new RuntimeException("Failed to serialize object", e);
         }

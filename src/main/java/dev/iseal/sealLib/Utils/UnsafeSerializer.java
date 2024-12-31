@@ -4,10 +4,13 @@ import com.esotericsoftware.kryo.kryo5.Kryo;
 import com.esotericsoftware.kryo.kryo5.Serializer;
 import com.esotericsoftware.kryo.kryo5.io.Input;
 import com.esotericsoftware.kryo.kryo5.io.Output;
+import dev.iseal.ExtraKryoCodecs.ExtraKryoCodecs;
+import dev.iseal.sealLib.SealLib;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 public class UnsafeSerializer {
 
@@ -19,6 +22,7 @@ public class UnsafeSerializer {
             return;
         }
         kryo = new Kryo();
+        ExtraKryoCodecs.init(kryo, SealLib.isDebug());
         kryo.setRegistrationRequired(false);
     }
 
@@ -42,9 +46,17 @@ public class UnsafeSerializer {
         for (Object object : objects) {
             kryo.writeObject(output, object);
         }
-        // flush the output stream and return the byte array
-        output.flush();
-        return outputStream.toByteArray();
+        try {
+            // flush the output stream and return the byte array
+            output.flush();
+            output.close();
+            outputStream.flush();
+            outputStream.close();
+            return outputStream.toByteArray();
+        } catch (Exception e) {
+            ExceptionHandler.getInstance().dealWithException(e, Level.WARNING, "FAILED_TO_SERIALIZE_OBJECTS");
+            return null;
+        }
     }
 
     /*

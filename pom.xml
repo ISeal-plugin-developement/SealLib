@@ -6,7 +6,7 @@
 
     <groupId>dev.iseal</groupId>
     <artifactId>SealLib</artifactId>
-    <version>1.0.2.0-DEV7</version>
+    <version>1.1.0.0-DEV8</version>
     <packaging>jar</packaging>
 
     <name>SealLib</name>
@@ -89,12 +89,10 @@
     </repositories>
 
     <dependencies>
-        <!--
         <dependency>
-            <groupId>com.esotericsoftware.kryo</groupId>
-            <artifactId>kryo5</artifactId>
-            <version>5.6.2</version>
-            <scope>provided</scope>
+            <groupId>dev.iseal</groupId>
+            <artifactId>ExtraKryoCodecs</artifactId>
+            <version>1.0.0.0-DEV16</version>
         </dependency>
         <dependency>
             <groupId>team.lodestar.lodestone</groupId>
@@ -106,7 +104,7 @@
                     <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>-->
+        </dependency>
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>

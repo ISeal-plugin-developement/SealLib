@@ -1,10 +1,10 @@
 package dev.iseal.sealLib.Commands;
 
 import de.leonhard.storage.shaded.jetbrains.annotations.NotNull;
+import dev.iseal.ExtraKryoCodecs.Holders.WorldParticleBuilderHolder;
 import dev.iseal.sealLib.SealLib;
 import dev.iseal.sealLib.Systems.CustomPackets.CustomPacketSender;
-import dev.iseal.sealLib.Systems.Effekts.Effekt;
-import dev.iseal.sealLib.Systems.Effekts.EffektsSender;
+import dev.iseal.sealLib.Systems.Effekts.EffeksSender;
 import dev.iseal.sealLib.Utils.BlockDisplayUtil;
 import dev.iseal.sealLib.Utils.ExceptionHandler;
 import dev.iseal.sealLib.Utils.GlobalUtils;
@@ -19,6 +19,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+import team.lodestar.lodestone.registry.common.particle.LodestoneParticleRegistry;
+import team.lodestar.lodestone.systems.easing.Easing;
+import team.lodestar.lodestone.systems.particle.builder.WorldParticleBuilder;
+import team.lodestar.lodestone.systems.particle.data.GenericParticleData;
+import team.lodestar.lodestone.systems.particle.data.color.ColorParticleData;
 import team.lodestar.lodestone.systems.screenshake.ScreenshakeInstance;
 
 import java.util.List;
@@ -73,10 +78,24 @@ public class DebugCommand implements CommandExecutor {
             }
             case "screenshake" -> {
                 // /d screenshake 20 0.3 linear
-                //CustomPacketSender.getInstance().sendPacket(new ScreenshakeHolder(new ScreenshakeInstance(40)), plr, "sealparticleplayer", "effekts", Effekt.SCREENSHAKE);
-                new EffektsSender().sendEffect(new ScreenshakeInstance(40), Effekt.SCREENSHAKE, plr);
+                EffeksSender.sendScreenshake(
+                        new ScreenshakeInstance(Integer.valueOf(args[1]))
+                                .setIntensity(Float.valueOf(args[2]))
+                                .setEasing(Easing.valueOf(args[3])),
+                        plr
+                );
             }
             case "particle" -> {
+                EffeksSender.sendParticle(
+                        new WorldParticleBuilderHolder(1)
+                                .setLifetime(1000)
+                                .setLocation(Double.parseDouble(args[1]), Double.parseDouble(args[2]), Double.parseDouble(args[3]))
+                                .setScaleData(GenericParticleData.create(20f).build())
+                                .setColorData(ColorParticleData.create(255, 0, 0).build())
+                                .disableCull()
+                                .enableForcedSpawn()
+                                .enableNoClip(),
+                    plr);
                     // /d particle 1 0.3 0.5 0.1 0.9 255 0 0 0 0 0 0.5 linear 0.3 1 linear 100 0.2 0.2 0.2 true 0.6 0 0 0
                 /*
                 CustomPacketSender.getInstance().sendPacket(new ParticleEffectBuilder(
