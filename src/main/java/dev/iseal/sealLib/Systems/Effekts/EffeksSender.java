@@ -1,6 +1,7 @@
 package dev.iseal.sealLib.Systems.Effekts;
 
 import dev.iseal.ExtraKryoCodecs.Enums.Effekt;
+import dev.iseal.ExtraKryoCodecs.Holders.ScreenFlashHolder;
 import dev.iseal.ExtraKryoCodecs.Holders.WorldParticleBuilderHolder;
 import dev.iseal.sealLib.Systems.CustomPackets.CustomPacketSender;
 import dev.iseal.sealLib.Utils.UnsafeSerializer;
@@ -28,6 +29,17 @@ public class EffeksSender {
                 "sealparticleplayer",
                 "effekts",
                 Effekt.PARTICLE
+        );
+    }
+
+    public static void sendScreenflash(ScreenFlashHolder inst, Player plr) {
+        byte[] holderScreenflash = UnsafeSerializer.serialize(inst);
+        CustomPacketSender.getInstance().sendPacket(
+                holderScreenflash,
+                plr,
+                "sealparticleplayer",
+                "effekts",
+                Effekt.SCREEN_FLASH
         );
     }
 

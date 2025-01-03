@@ -1,6 +1,7 @@
 package dev.iseal.sealLib.Commands;
 
 import de.leonhard.storage.shaded.jetbrains.annotations.NotNull;
+import dev.iseal.ExtraKryoCodecs.Holders.ScreenFlashHolder;
 import dev.iseal.ExtraKryoCodecs.Holders.WorldParticleBuilderHolder;
 import dev.iseal.sealLib.SealLib;
 import dev.iseal.sealLib.Systems.CustomPackets.CustomPacketSender;
@@ -19,9 +20,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
-import team.lodestar.lodestone.registry.common.particle.LodestoneParticleRegistry;
 import team.lodestar.lodestone.systems.easing.Easing;
-import team.lodestar.lodestone.systems.particle.builder.WorldParticleBuilder;
 import team.lodestar.lodestone.systems.particle.data.GenericParticleData;
 import team.lodestar.lodestone.systems.particle.data.color.ColorParticleData;
 import team.lodestar.lodestone.systems.screenshake.ScreenshakeInstance;
@@ -60,7 +59,7 @@ public class DebugCommand implements CommandExecutor {
                             BlockDisplayUtil.renderModel(location, points, Material.STONE, blockScale)
                     );
 
-                    plr.sendMessage("Done in " + ((Long) (System.currentTimeMillis() - time)).toString() + "ms");
+                    plr.sendMessage("Done in " + ((Long) (System.currentTimeMillis() - time)) + "ms");
 
                 } catch (Exception ex) {
                     ExceptionHandler.getInstance().dealWithException(ex, Level.WARNING, "SPAWNING_DEBUG_PARTICLES");
@@ -96,33 +95,15 @@ public class DebugCommand implements CommandExecutor {
                                 .enableForcedSpawn()
                                 .enableNoClip(),
                     plr);
-                    // /d particle 1 0.3 0.5 0.1 0.9 255 0 0 0 0 0 0.5 linear 0.3 1 linear 100 0.2 0.2 0.2 true 0.6 0 0 0
-                /*
-                CustomPacketSender.getInstance().sendPacket(new ParticleEffectBuilder(
-                        Integer.parseInt(args[1]), // particleID
-                        Float.parseFloat(args[2]), // initialScale
-                        Float.parseFloat(args[3]), // finalScale
-                        Float.parseFloat(args[4]), // initialTransparency
-                        Float.parseFloat(args[5]), // finalTransparency
-                        new java.awt.Color(Integer.parseInt(args[6]), Integer.parseInt(args[7]), Integer.parseInt(args[8])), // initialColor
-                        new java.awt.Color(Integer.parseInt(args[9]), Integer.parseInt(args[10]), Integer.parseInt(args[11])), // finalColor
-                        Float.parseFloat(args[12]), // colorCoefficient
-                        args[13], // colorEasingName
-                        Float.parseFloat(args[14]), // spinMin
-                        Float.parseFloat(args[15]), // spinMax
-                        args[16], // spinEasingName
-                        Integer.parseInt(args[17]), // lifetime
-                        Float.parseFloat(args[18]), // motionX
-                        Float.parseFloat(args[19]), // motionY
-                        Float.parseFloat(args[20]), // motionZ
-                        Boolean.parseBoolean(args[21]), // noClip
-                        Float.parseFloat(args[22]), // randomMotion
-                        Float.parseFloat(args[23]), // posX
-                        Float.parseFloat(args[24]), // posY
-                        Float.parseFloat(args[25])  // posZ
-                ).toByteArray()
-                        , plr, "hadesfightparticleplayer", "test_packet");
-                 */
+            }
+            case "screenFlash" -> {
+                EffeksSender.sendScreenflash(
+                        new ScreenFlashHolder(
+                                Integer.parseInt(args[1]), Float.parseFloat(args[2]),
+                                255,255,255
+                        ),
+                        plr
+                );
             }
             case "randomPacket" -> {
                 CustomPacketSender.getInstance().sendPacket(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, plr, GlobalUtils.generateRandomString(12), GlobalUtils.generateRandomString(12));
