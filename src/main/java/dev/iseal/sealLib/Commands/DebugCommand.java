@@ -85,6 +85,7 @@ public class DebugCommand implements CommandExecutor {
                 );
             }
             case "particle" -> {
+                // /d particle 100 80 -100
                 EffeksSender.sendParticle(
                         new WorldParticleBuilderHolder(1)
                                 .setLifetime(1000)
@@ -97,6 +98,7 @@ public class DebugCommand implements CommandExecutor {
                     plr);
             }
             case "screenFlash" -> {
+                // /d screenFlash 100 0.01
                 EffeksSender.sendScreenflash(
                         new ScreenFlashHolder(
                                 Integer.parseInt(args[1]), Float.parseFloat(args[2]),
