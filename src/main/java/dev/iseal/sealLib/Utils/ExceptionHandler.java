@@ -18,6 +18,9 @@ public class ExceptionHandler {
     private final Logger log = Bukkit.getLogger();
     private ArrayList<String> currentLog = new ArrayList<>();
 
+    // class, instance
+    private final HashMap<Class<? extends Dumpable>, Dumpable> registeredClasses = new HashMap<>();
+
     public static ExceptionHandler getInstance() {
         if (instance == null)
             instance = new ExceptionHandler();
@@ -45,9 +48,6 @@ public class ExceptionHandler {
 
         if (SealLib.isDebug())
             dumpAllClasses(mainClass);
-
-        if (logLevel == Level.SEVERE)
-            MetricsManager.getInstance().sendError(errorMessage, mainClass.getPackageName().split("\\.")[2]);
         currentLog.forEach((str) -> log.log(logLevel, str));
     }
 
@@ -56,9 +56,14 @@ public class ExceptionHandler {
             caller = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
         }
 
+        HashMap<String, HashMap<String, Object>> dumpMap = new HashMap<>();
+        registeredClasses.forEach((clazz, dumpable) -> {
+            dumpMap.put(clazz.getSimpleName(), dumpable.dump());
+        });
+
+        /*
         Set<Class<?>> dumpableClasses = new HashSet<>();
         dumpableClasses.addAll(GlobalUtils.findAllClassesInPackage(caller.getPackageName(), Dumpable.class));
-        HashMap<String, HashMap<String, Object>> dumpMap = new HashMap<>();
         dumpableClasses.forEach(clazz -> {
             try {
                 if (clazz.equals(Dumpable.class)) return;
@@ -96,6 +101,7 @@ public class ExceptionHandler {
                 currentLog.add("[SealLib] " + "Error while trying to dump class " + clazz.getSimpleName());
             }
         });
+         */
         dumpMap.forEach((className, dumpMapTemp) -> {
             dumpMapTemp.forEach((toDump, dumpValue) -> {
                 currentLog.add( "[SealLib] Dump from: "+className+" -> "+toDump+": "+dumpValue.toString());
@@ -107,6 +113,10 @@ public class ExceptionHandler {
         if (ex instanceof SecurityException se) {
             currentLog.add("[SealLib] SecurityException caught, what?");
         }
+    }
+
+    public void registerClass(Class<? extends Dumpable> clazz, Dumpable instance) {
+        registeredClasses.put(clazz, instance);
     }
 
 }

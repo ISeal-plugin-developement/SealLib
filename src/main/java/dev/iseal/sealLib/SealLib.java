@@ -1,6 +1,7 @@
 package dev.iseal.sealLib;
 
 import de.leonhard.storage.Config;
+import dev.iseal.ExtraKryoCodecs.ExtraKryoCodecs;
 import dev.iseal.sealLib.Commands.DebugCommand;
 import dev.iseal.sealLib.Metrics.MetricsManager;
 import dev.iseal.sealLib.Utils.UnsafeSerializer;

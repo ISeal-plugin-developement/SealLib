@@ -8,12 +8,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.reflections.Reflections;
+import org.reflections.scanners.Scanners;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 
 import java.io.*;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static dev.iseal.sealLib.SealLib.isDebug;
@@ -47,7 +49,6 @@ public class GlobalUtils {
 
     public static Object deserializeSerializableClass(byte[] bytes) {
         ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-
         try (ObjectInput in = new ObjectInputStream(bis)) {
             return in.readObject();
         } catch (Exception ex) {
@@ -180,4 +181,11 @@ public class GlobalUtils {
         return sb.toString();
     }
 
+    public static <T> boolean areListsEqual(List<T> list, List<T> otherList) {
+        if (list.size() != otherList.size()) {
+            return false;
+        }
+        Set<T> set = new HashSet<>(list);
+        return set.containsAll(otherList);
+    }
 }

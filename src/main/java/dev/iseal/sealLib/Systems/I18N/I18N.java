@@ -25,9 +25,13 @@ public class I18N implements Dumpable {
         return instance;
     }
 
+    public I18N() {
+        dumpableInit();
+    }
+
     private static final HashMap<String, ResourceBundle> selectedBundles = new HashMap<>();
 
-    private void unpackAllLanguages(JavaPlugin plugin) throws URISyntaxException, IOException {
+    private void unpackAllLanguages(JavaPlugin plugin) throws URISyntaxException {
         Logger logger = Bukkit.getLogger();
         ResourceWalker.getInstance().walk(plugin.getClass(), "languages", (inputStream, fileName) -> {
             File dataFolder = plugin.getDataFolder();

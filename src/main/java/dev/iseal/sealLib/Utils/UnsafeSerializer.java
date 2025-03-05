@@ -6,6 +6,7 @@ import com.esotericsoftware.kryo.kryo5.io.Input;
 import com.esotericsoftware.kryo.kryo5.io.Output;
 import dev.iseal.ExtraKryoCodecs.ExtraKryoCodecs;
 import dev.iseal.sealLib.SealLib;
+import org.bukkit.Bukkit;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -22,7 +23,12 @@ public class UnsafeSerializer {
             return;
         }
         kryo = new Kryo();
-        ExtraKryoCodecs.init(kryo, SealLib.isDebug());
+        if (Bukkit.getVersion().contains("1.20.1") && SealLib.isDependencyLoaded("ProtocolLib")) {
+            SealLib.getPlugin().getLogger().info("Requirements met! Initializing ExtraKryoCodecs...");
+            ExtraKryoCodecs.init(kryo, SealLib.isDebug());
+        } else {
+            SealLib.getPlugin().getLogger().warning("Requirements not met! ExtraKryoCodecs will not be initialized.");
+        }
         kryo.setRegistrationRequired(false);
     }
 

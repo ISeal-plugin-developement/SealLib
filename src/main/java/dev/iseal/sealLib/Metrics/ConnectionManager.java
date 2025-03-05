@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 public class ConnectionManager {
 
     private String token = "-1";
-    private final Logger l = Bukkit.getLogger();
+    private final Logger l = SealLib.getPlugin().getLogger();
 
     private static ConnectionManager instance;
     public static ConnectionManager getInstance() {
@@ -28,8 +28,11 @@ public class ConnectionManager {
     }
 
     public String sendDataToAPI(String endpoint, String payload, String method, boolean requiresAuth) {
+        l.info("A plugin tried to send data to SealLib's API. It has been deprecated. Please warn the developer.");
+        return "DEPRECATED";
+        /*
         if (SealLib.isDebug()) {
-            l.info("[SealLib] Sending data to the API" + " " + endpoint + " " + payload + " " + method + " " + requiresAuth);
+            l.info("Sending data to the API" + " " + endpoint + " " + payload + " " + method + " " + requiresAuth);
             return "DEBUG";
         } else {
             method = (method == null) ? "POST" : method;
@@ -37,6 +40,7 @@ public class ConnectionManager {
                 authenticate();
             return initConnection("https://analytics.iseal.dev/api/v1/" + endpoint, method, payload, true)[0];
         }
+         */
     }
 
     private void authenticate() {
@@ -62,7 +66,7 @@ public class ConnectionManager {
             int responseCode = connection.getResponseCode();
 
             if (SealLib.isDebug())
-                l.info("[SealLib] Response code: " + responseCode);
+                l.info("Response code: " + responseCode);
 
             // Processing the response
             if (responseCode == HttpsURLConnection.HTTP_OK) {
@@ -90,7 +94,7 @@ public class ConnectionManager {
         URL url = new URL(endpoint);
 
         if (SealLib.isDebug())
-            l.info("[SealLib] Connecting to " + url);
+            l.info("Connecting to " + url);
 
         // Opening a connection
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
