@@ -185,7 +185,7 @@ public class GlobalUtils {
         if (list.size() != otherList.size()) {
             return false;
         }
-        Set<T> set = new HashSet<>(list);
-        return set.containsAll(otherList);
+        return list.equals(otherList);
     }
+
 }
