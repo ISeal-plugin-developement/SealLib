@@ -188,4 +188,12 @@ public class GlobalUtils {
         return list.equals(otherList);
     }
 
+    public static <T> boolean areListsSimilar(List<T> list, List<T> otherList) {
+        if (list.size() != otherList.size()) {
+            return false;
+        }
+        Set<T> set = new HashSet<>(list);
+        return set.containsAll(otherList);
+    }
+
 }
