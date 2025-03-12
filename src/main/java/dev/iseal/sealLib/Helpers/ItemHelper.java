@@ -8,7 +8,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class ItemHelper {
 
-    public ItemStack addGlow(ItemStack itemStack) {
+    public static ItemStack addGlow(ItemStack itemStack) {
         // adds protection to bows and infinity to every other item as infinity is only useful on bows and protection is only useful on armor
         itemStack.addUnsafeEnchantment((itemStack.getType() == Material.BOW) ? Enchantment.PROTECTION_ENVIRONMENTAL : Enchantment.ARROW_INFINITE, 1);
         // hides the enchantments
