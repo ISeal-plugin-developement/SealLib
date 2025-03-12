@@ -125,10 +125,6 @@ public class GlobalUtils {
     }
 
     public static List<LivingEntity> getEntitiesInCone(Player player, double range, double fov) {
-        if (!isDebug()) {
-            throw new UnsupportedOperationException("This method is not implemented yet.");
-        }
-
         Vector direction = player.getEyeLocation().getDirection().normalize();
         double halfFovRad = Math.toRadians(fov / 2);
         List<Entity> nearbyEntities = player.getNearbyEntities(range, range, range);
@@ -146,7 +142,7 @@ public class GlobalUtils {
                     double angle = direction.angle(toEntity);
                     return angle <= halfFovRad;
                 })
-                .collect(Collectors.toList());
+                .toList();
 
         // Second step: filter entities that are in the line of sight
         // sync because bukkit api is not thread safe
