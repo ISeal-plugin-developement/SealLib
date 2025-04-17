@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public final class SealLib extends JavaPlugin {
 
-    private final Config config = new Config("config", this.getDataFolder().getPath()+"/config/");
+    private static Config config;
     private static boolean debug = false;
     private static JavaPlugin plugin;
 
@@ -26,8 +26,11 @@ public final class SealLib extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         plugin = this;
+        config = new Config("config", this.getDataFolder().getPath()+"/config/");
         Bukkit.getServer().getPluginManager().registerEvents(MetricsManager.getInstance(), this);
         debug = config.getOrSetDefault("debug", false);
+        config.setDefault("updaterAllowBeta", false);
+        config.setDefault("updaterAllowAlpha", false);
         if (debug)
             Bukkit.getPluginCommand("debug").setExecutor(new DebugCommand());
         checkSoftDependencies();
@@ -63,6 +66,14 @@ public final class SealLib extends JavaPlugin {
 
     public static JavaPlugin getPlugin() {
         return plugin;
+    }
+
+    public static boolean isAllowBeta() {
+        return config.getBoolean("updaterAllowBeta");
+    }
+
+    public static boolean isAllowAlpha() {
+        return config.getBoolean("updaterAllowAlpha");
     }
 
 }
