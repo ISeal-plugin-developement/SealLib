@@ -6,10 +6,10 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
-/.idea/
+/.idea
 /.idea/**
 SealLib.iml
+/target
 /target/**
-/target/
-/scripts/
+/scripts
 /scripts/**
