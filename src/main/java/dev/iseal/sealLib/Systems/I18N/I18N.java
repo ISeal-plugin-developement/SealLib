@@ -136,15 +136,43 @@ public class I18N implements Dumpable {
     }
 
     public static String getTranslation(String key, String... args) {
-        return translate(key, args);
+        try {
+            String translation = selectedBundles.get(StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
+                            .getCallerClass().getPackageName().split("\\.")[2])
+                    .getString(key);
+
+            for (int i = 0; i < args.length; i++) {
+                translation = translation.replace("{" + i + "}", args[i] != null ? args[i] : "null");
+            }
+
+            return ChatColor.translateAlternateColorCodes('&', translation);
+        } catch (MissingResourceException | NullPointerException e) {
+            return key;
+        }
     }
 
     private static String getTranslation(String key) {
-        return translate(key, new String[0]);
+        try {
+            String translation = selectedBundles.get(StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
+                            .getCallerClass().getPackageName().split("\\.")[2])
+                    .getString(key);
+
+            return ChatColor.translateAlternateColorCodes('&', translation);
+        } catch (MissingResourceException | NullPointerException e) {
+            return key;
+        }
     }
 
     public static String translate(String key) {
-        return translate(key, new String[0]);
+        try {
+            String translation = selectedBundles.get(StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
+                            .getCallerClass().getPackageName().split("\\.")[2])
+                    .getString(key);
+
+            return ChatColor.translateAlternateColorCodes('&', translation);
+        } catch (MissingResourceException | NullPointerException e) {
+            return key;
+        }
     }
 
     public static String translate(String key, String... args) {
