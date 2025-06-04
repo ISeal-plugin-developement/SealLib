@@ -14,7 +14,7 @@ public class NSKeyHelper {
     private final static HashMap<String, NamespacedKey> CACHE = new HashMap<>();
     private final static Logger log = SealLib.getPlugin().getLogger();
 
-    /*
+    /**
         * Get a NamespacedKey from the cache or create a new one.
         * @param key The key to get.
         * @return The NamespacedKey.
@@ -39,7 +39,7 @@ public class NSKeyHelper {
         return nsKey;
     }
 
-    /*
+    /**
         * Get a NamespacedKey from the cache or create a new one.
         * @param plugin The plugin to use for the NamespacedKey.
         * @param key The key to get.

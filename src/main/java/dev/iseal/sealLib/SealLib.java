@@ -3,6 +3,7 @@ package dev.iseal.sealLib;
 import de.leonhard.storage.Config;
 import dev.iseal.sealLib.Commands.DebugCommand;
 import dev.iseal.sealLib.Metrics.MetricsManager;
+import dev.iseal.sealUtils.SealUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -26,6 +27,7 @@ public final class SealLib extends JavaPlugin {
         config = new Config("config", this.getDataFolder().getPath()+"/config/");
         Bukkit.getServer().getPluginManager().registerEvents(MetricsManager.getInstance(), this);
         debug = config.getOrSetDefault("debug", false);
+        SealUtils.init(debug);
         config.setDefault("updaterAllowBeta", false);
         config.setDefault("updaterAllowAlpha", false);
         if (debug)

@@ -14,7 +14,7 @@ import java.util.List;
 public class BlockDisplayUtil {
 
     public static void createBlockDisplay(World world, Location location, Material material, float scale) {
-        BlockDisplay blockDisplay = (BlockDisplay) world.spawn(location, BlockDisplay.class);
+        BlockDisplay blockDisplay = world.spawn(location, BlockDisplay.class);
         blockDisplay.setBlock(material.createBlockData());
         // Create transformation components
         Vector3f translation = new Vector3f(0f, 0f, 0f);
