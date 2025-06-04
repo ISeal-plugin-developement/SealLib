@@ -1,13 +1,11 @@
 package dev.iseal.sealLib.Metrics;
 
 import dev.iseal.sealLib.SealLib;
-import dev.iseal.sealLib.Utils.ExceptionHandler;
-import org.bukkit.Bukkit;
+import dev.iseal.sealUtils.utils.ExceptionHandler;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.URL;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -82,10 +80,10 @@ public class ConnectionManager {
                 return new String[]{response.toString(), String.valueOf(responseCode)};
             } else {
                 if (errorOnFail)
-                    ExceptionHandler.getInstance().dealWithException(new IOException("The API returned a non-200 result. Check any updates on the discord if it is down"), Level.WARNING, "API_ERROR_CODE_"+responseCode);
+                    ExceptionHandler.getInstance().dealWithException(new IOException("The API returned a non-200 result. Check any updates on the discord if it is down"), Level.WARNING, "API_ERROR_CODE_"+responseCode, l);
             }
         } catch (Exception e) {
-            ExceptionHandler.getInstance().dealWithException(e, Level.WARNING, "API_CONN_FAILED", endpoint, method, payload);
+            ExceptionHandler.getInstance().dealWithException(e, Level.WARNING, "API_CONN_FAILED", l, endpoint, method, payload);
         }
         return new String[]{"", "-1"};
     }

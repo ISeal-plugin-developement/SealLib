@@ -8,61 +8,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.reflections.Reflections;
-import org.reflections.scanners.Scanners;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
 
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static dev.iseal.sealLib.SealLib.isDebug;
-
-public class GlobalUtils {
-
-    /*
-        * Serialize a serializable class to a byte array
-        * @param obj The object to serialize
-        * @return The serialized object
-        * @throws IllegalArgumentException If the object is not serializable
-     */
-    public static byte[] serializeSerializableClass(final Object obj, final byte[] extraData) {
-        if (!(obj instanceof Serializable)) {
-            throw new IllegalArgumentException("Object must be serializable");
-        }
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        try (ObjectOutputStream out = new ObjectOutputStream(baos)) {
-            // write extra data to the beginning of the stream
-            out.write(extraData);
-
-            // write the object to the stream
-            out.writeObject(obj);
-            out.flush();
-            return baos.toByteArray();
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    public static Object deserializeSerializableClass(byte[] bytes) {
-        ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-        try (ObjectInput in = new ObjectInputStream(bis)) {
-            return in.readObject();
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    public static Set<Class<?>> findAllClassesInPackage(String packageName, Class<?> clazz) {
-        Thread.currentThread().setContextClassLoader(clazz.getClassLoader());
-        Reflections reflections = new Reflections(packageName);
-        Set<Class<?>> classes = (Set<Class<?>>) reflections.getSubTypesOf(clazz);
-        Thread.currentThread().setContextClassLoader(GlobalUtils.class.getClassLoader());
-        return classes;
-    }
+public class SpigotGlobalUtils {
 
     public static LivingEntity raycastPrecise(Player entity, double range) {
         RayTraceResult result = entity.getWorld().rayTraceEntities(
@@ -165,31 +116,6 @@ public class GlobalUtils {
                 .collect(Collectors.toList());
 
         return secondStep;
-    }
-
-    public static String generateRandomString(int length) {
-        String chars = "abcdefghijklmnopqrstuvwxyz0123456789_.-";
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < length; i++) {
-            int index = (int) (chars.length() * Math.random());
-            sb.append(chars.charAt(index));
-        }
-        return sb.toString();
-    }
-
-    public static <T> boolean areListsEqual(List<T> list, List<T> otherList) {
-        if (list.size() != otherList.size()) {
-            return false;
-        }
-        return list.equals(otherList);
-    }
-
-    public static <T> boolean areListsSimilar(List<T> list, List<T> otherList) {
-        if (list.size() != otherList.size()) {
-            return false;
-        }
-        Set<T> set = new HashSet<>(list);
-        return set.containsAll(otherList);
     }
 
 }

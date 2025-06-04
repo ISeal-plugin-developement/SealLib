@@ -3,6 +3,8 @@ package dev.iseal.sealLib.Utils;
 import de.javagl.obj.Obj;
 import de.javagl.obj.ObjReader;
 import de.javagl.obj.ObjUtils;
+import dev.iseal.sealLib.SealLib;
+import dev.iseal.sealUtils.utils.ExceptionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.util.Vector;
 
@@ -14,8 +16,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ModelRenderer {
+
+    private final static Logger log = SealLib.getPlugin().getLogger();
 
     public static List<Vector> getVectors(String URL, float scale, float rotationAngle, float precision) throws IOException {
         InputStream modelStream = new File(URL).toURI().toURL().openStream();
@@ -24,7 +29,7 @@ public class ModelRenderer {
             modelVertices = loadModel(modelStream, scale, rotationAngle, precision);
         } catch (IOException e) {
             Bukkit.getLogger().severe("Failed to load the 3D model");
-            ExceptionHandler.getInstance().dealWithException(e, Level.SEVERE, "MODEL_LOADING_FAILED", URL);
+            ExceptionHandler.getInstance().dealWithException(e, Level.SEVERE, "MODEL_LOADING_FAILED", log, URL);
         }
         return modelVertices;
     }

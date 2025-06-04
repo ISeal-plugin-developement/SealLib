@@ -1,15 +1,15 @@
 package dev.iseal.sealLib.Commands;
 
-import de.leonhard.storage.shaded.jetbrains.annotations.NotNull;
 import dev.iseal.ExtraKryoCodecs.Holders.ScreenFlashHolder;
 import dev.iseal.ExtraKryoCodecs.Holders.WorldParticleBuilderHolder;
 import dev.iseal.sealLib.SealLib;
 import dev.iseal.sealLib.Systems.CustomPackets.CustomPacketSender;
 import dev.iseal.sealLib.Systems.Effekts.EffeksSender;
 import dev.iseal.sealLib.Utils.BlockDisplayUtil;
-import dev.iseal.sealLib.Utils.ExceptionHandler;
-import dev.iseal.sealLib.Utils.GlobalUtils;
+import dev.iseal.sealLib.Utils.SpigotGlobalUtils;
 import dev.iseal.sealLib.Utils.ModelRenderer;
+import dev.iseal.sealUtils.utils.ExceptionHandler;
+import dev.iseal.sealUtils.utils.GlobalUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,6 +20,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 import team.lodestar.lodestone.systems.easing.Easing;
 import team.lodestar.lodestone.systems.particle.data.GenericParticleData;
 import team.lodestar.lodestone.systems.particle.data.color.ColorParticleData;
@@ -27,8 +28,12 @@ import team.lodestar.lodestone.systems.screenshake.ScreenshakeInstance;
 
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DebugCommand implements CommandExecutor {
+
+    private static final Logger log = SealLib.getPlugin().getLogger();
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player plr)) {
@@ -59,17 +64,17 @@ public class DebugCommand implements CommandExecutor {
                             BlockDisplayUtil.renderModel(location, points, Material.STONE, blockScale)
                     );
 
-                    plr.sendMessage("Done in " + ((Long) (System.currentTimeMillis() - time)) + "ms");
+                    plr.sendMessage("Done in " + (System.currentTimeMillis() - time) + "ms");
 
                 } catch (Exception ex) {
-                    ExceptionHandler.getInstance().dealWithException(ex, Level.WARNING, "SPAWNING_DEBUG_PARTICLES");
+                    ExceptionHandler.getInstance().dealWithException(ex, Level.WARNING, "SPAWNING_DEBUG_PARTICLES", log);
                 }
 
             });
             case "coneGivenFOV" -> {
                 // arg 1: range (like 100 is fine)
                 // arg 2: fov (do in game fov+30)
-                List<LivingEntity> entities = GlobalUtils.getEntitiesInCone(plr, Double.parseDouble(args[1]), Double.parseDouble(args[2]));
+                List<LivingEntity> entities = SpigotGlobalUtils.getEntitiesInCone(plr, Double.parseDouble(args[1]), Double.parseDouble(args[2]));
                 entities.forEach(entity ->
                         plr.sendMessage("entity name " + entity.getName() + " id " + entity.getEntityId() + " is in the cone.")
                 );

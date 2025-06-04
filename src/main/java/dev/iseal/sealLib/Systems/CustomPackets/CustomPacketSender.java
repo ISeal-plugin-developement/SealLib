@@ -9,8 +9,8 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.MinecraftKey;
 import dev.iseal.sealLib.SealLib;
 import dev.iseal.sealLib.Systems.CustomPackets.Packets.WrapperPlayServerCustomPayload;
-import dev.iseal.sealLib.Utils.ExceptionHandler;
-import dev.iseal.sealLib.Utils.UnsafeSerializer;
+import dev.iseal.sealUtils.systems.serializer.UnsafeSerializer;
+import dev.iseal.sealUtils.utils.ExceptionHandler;
 import org.bukkit.entity.Player;
 
 import java.io.ByteArrayOutputStream;
@@ -18,6 +18,7 @@ import java.io.DataOutputStream;
 import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CustomPacketSender {
 
@@ -30,15 +31,16 @@ public class CustomPacketSender {
     }
 
     private final ProtocolManager protocolManager;
+    private static final Logger log = SealLib.getPlugin().getLogger();
 
     protected CustomPacketSender() {
         if (!SealLib.isDependencyLoaded("ProtocolLib")) {
-            ExceptionHandler.getInstance().dealWithException(new RuntimeException("ProtocolLib not found! Custom Packets will not work!"), Level.WARNING, "PROTOCOLLIB_DEPENDENCY_NOT_LOADED");
+            ExceptionHandler.getInstance().dealWithException(new RuntimeException("ProtocolLib not found! Custom Packets will not work!"), Level.WARNING, "PROTOCOLLIB_DEPENDENCY_NOT_LOADED", log);
         }
         protocolManager = ProtocolLibrary.getProtocolManager();
     }
 
-    /*
+    /**
         * Send a packet to a player
         * The packet is sent with the extra data at the front.
         * NOTE: The extra data is serialized with UnsafeSerializer

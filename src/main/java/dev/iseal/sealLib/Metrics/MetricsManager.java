@@ -1,7 +1,8 @@
 package dev.iseal.sealLib.Metrics;
 
 import com.google.gson.Gson;
-import dev.iseal.sealLib.Utils.ExceptionHandler;
+import dev.iseal.sealLib.SealLib;
+import dev.iseal.sealUtils.utils.ExceptionHandler;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.Consumer;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MetricsManager implements Listener {
 
@@ -22,6 +24,7 @@ public class MetricsManager implements Listener {
     private final ArrayList<Consumer<Player>> quitMetrics = new ArrayList<>();
     private final ArrayList<Consumer<Void>> shutdownMetrics = new ArrayList<>();
     private final HashMap<String, String> infoToSendOnExit = new HashMap<>();
+    private static final Logger log = SealLib.getPlugin().getLogger();
 
     private static MetricsManager instance = null;
     public static MetricsManager getInstance() {
@@ -53,7 +56,7 @@ public class MetricsManager implements Listener {
                 try {
                     consumer.accept(null);
                 } catch (Exception e) {
-                    ExceptionHandler.getInstance().dealWithException(e, Level.WARNING, "CALL_SHUTDOWN_METRICS_FAILED");
+                    ExceptionHandler.getInstance().dealWithException(e, Level.WARNING, "CALL_SHUTDOWN_METRICS_FAILED", log);
                 }
             });
         infoToSendOnExit.forEach((endpoint, info) -> {
@@ -70,7 +73,7 @@ public class MetricsManager implements Listener {
             try {
                 consumer.accept(e.getPlayer());
             } catch (Exception ex) {
-                ExceptionHandler.getInstance().dealWithException(ex, Level.WARNING, "CALL_QUIT_METRICS_FAILED");
+                ExceptionHandler.getInstance().dealWithException(ex, Level.WARNING, "CALL_QUIT_METRICS_FAILED", log);
             }
         });
     }
@@ -81,7 +84,7 @@ public class MetricsManager implements Listener {
             try {
                 consumer.accept(e.getPlayer());
             } catch (Exception ex) {
-                ExceptionHandler.getInstance().dealWithException(ex, Level.WARNING, "CALL_JOIN_METRICS_FAILED");
+                ExceptionHandler.getInstance().dealWithException(ex, Level.WARNING, "CALL_JOIN_METRICS_FAILED", log);
             }
         });
     }

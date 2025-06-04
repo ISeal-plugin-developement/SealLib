@@ -1,16 +1,18 @@
 package dev.iseal.sealLib.Helpers;
 
 import dev.iseal.sealLib.SealLib;
-import dev.iseal.sealLib.Utils.ExceptionHandler;
+import dev.iseal.sealUtils.utils.ExceptionHandler;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class NSKeyHelper {
 
     private final static HashMap<String, NamespacedKey> CACHE = new HashMap<>();
+    private final static Logger log = SealLib.getPlugin().getLogger();
 
     /*
         * Get a NamespacedKey from the cache or create a new one.
@@ -29,6 +31,7 @@ public class NSKeyHelper {
                 new RuntimeException("NSKey not found in cache! Making new key with ns SealLib. This is dangerous!"),
                 Level.WARNING,
                 "NSKEY_NOT_IN_CACHE",
+                log,
                 key
         );
         NamespacedKey nsKey = new NamespacedKey(SealLib.getPlugin(), key);

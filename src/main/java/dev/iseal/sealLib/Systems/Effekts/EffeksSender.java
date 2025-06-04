@@ -4,7 +4,7 @@ import dev.iseal.ExtraKryoCodecs.Enums.Effekt;
 import dev.iseal.ExtraKryoCodecs.Holders.ScreenFlashHolder;
 import dev.iseal.ExtraKryoCodecs.Holders.WorldParticleBuilderHolder;
 import dev.iseal.sealLib.Systems.CustomPackets.CustomPacketSender;
-import dev.iseal.sealLib.Utils.UnsafeSerializer;
+import dev.iseal.sealUtils.systems.serializer.UnsafeSerializer;
 import org.bukkit.entity.Player;
 import team.lodestar.lodestone.systems.screenshake.ScreenshakeInstance;
 
