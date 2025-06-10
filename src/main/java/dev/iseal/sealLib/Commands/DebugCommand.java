@@ -69,7 +69,6 @@ public class DebugCommand implements CommandExecutor {
                 } catch (Exception ex) {
                     ExceptionHandler.getInstance().dealWithException(ex, Level.WARNING, "SPAWNING_DEBUG_PARTICLES", log);
                 }
-
             });
             case "coneGivenFOV" -> {
                 // arg 1: range (like 100 is fine)
@@ -100,14 +99,14 @@ public class DebugCommand implements CommandExecutor {
                                 .disableCull()
                                 .enableForcedSpawn()
                                 .enableNoClip(),
-                    plr);
+                        plr);
             }
             case "screenFlash" -> {
                 // /d screenFlash 100 0.01
                 EffeksSender.sendScreenflash(
                         new ScreenFlashHolder(
                                 Integer.parseInt(args[1]), Float.parseFloat(args[2]),
-                                255,255,255
+                                255, 255, 255
                         ),
                         plr
                 );
@@ -115,6 +114,13 @@ public class DebugCommand implements CommandExecutor {
             case "randomPacket" -> {
                 CustomPacketSender.getInstance().sendPacket(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, plr, GlobalUtils.generateRandomString(12), GlobalUtils.generateRandomString(12));
             }
+            case "dump" -> {
+                // /d dump
+                log.info("Dumping classes...");
+                ExceptionHandler.getInstance().dumpAllClasses(true);
+                log.info("Dumping done.");
+            }
+            default -> plr.sendMessage("Unknown debug command.");
         }
 
         return true;

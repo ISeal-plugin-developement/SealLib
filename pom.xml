@@ -99,7 +99,7 @@
         <dependency>
             <groupId>com.github.iseal56</groupId>
             <artifactId>SealUtils</artifactId>
-            <version>1.0.0.0</version>
+            <version>1.0.0.1</version>
         </dependency>
         <dependency>
             <groupId>team.lodestar.lodestone</groupId>
