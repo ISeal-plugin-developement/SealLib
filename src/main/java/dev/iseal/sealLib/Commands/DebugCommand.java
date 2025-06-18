@@ -120,6 +120,10 @@ public class DebugCommand implements CommandExecutor {
                 ExceptionHandler.getInstance().dumpAllClasses(true);
                 log.info("Dumping done.");
             }
+            case "fakeException" -> {
+                // /d fakeException <optional: level>
+                ExceptionHandler.getInstance().dealWithException(new RuntimeException("This is a fake exception for debugging purposes."), ((args[1] != null) ? Level.parse(args[1]) : Level.SEVERE), "FAKE_EXCEPTION", log);
+            }
             default -> plr.sendMessage("Unknown debug command.");
         }
 
