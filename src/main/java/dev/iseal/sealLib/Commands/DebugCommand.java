@@ -1,10 +1,7 @@
 package dev.iseal.sealLib.Commands;
 
-import dev.iseal.ExtraKryoCodecs.Holders.ScreenFlashHolder;
-import dev.iseal.ExtraKryoCodecs.Holders.WorldParticleBuilderHolder;
 import dev.iseal.sealLib.SealLib;
 import dev.iseal.sealLib.Systems.CustomPackets.CustomPacketSender;
-import dev.iseal.sealLib.Systems.Effekts.EffeksSender;
 import dev.iseal.sealLib.Utils.BlockDisplayUtil;
 import dev.iseal.sealLib.Utils.SpigotGlobalUtils;
 import dev.iseal.sealLib.Utils.ModelRenderer;
@@ -20,11 +17,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
-import team.lodestar.lodestone.systems.easing.Easing;
-import team.lodestar.lodestone.systems.particle.data.GenericParticleData;
-import team.lodestar.lodestone.systems.particle.data.color.ColorParticleData;
-import team.lodestar.lodestone.systems.screenshake.ScreenshakeInstance;
 
 import java.util.List;
 import java.util.logging.Level;
@@ -35,7 +27,7 @@ public class DebugCommand implements CommandExecutor {
     private static final Logger log = SealLib.getPlugin().getLogger();
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player plr)) {
             sender.sendMessage("Please be a player.");
             return true;
@@ -79,38 +71,6 @@ public class DebugCommand implements CommandExecutor {
                 );
                 plr.sendMessage("Done. " + entities.size() + " entities found.");
             }
-            case "screenshake" -> {
-                // /d screenshake 20 0.3 linear
-                EffeksSender.sendScreenshake(
-                        new ScreenshakeInstance(Integer.valueOf(args[1]))
-                                .setIntensity(Float.valueOf(args[2]))
-                                .setEasing(Easing.valueOf(args[3])),
-                        plr
-                );
-            }
-            case "particle" -> {
-                // /d particle 100 80 -100
-                EffeksSender.sendParticle(
-                        new WorldParticleBuilderHolder(1)
-                                .setLifetime(1000)
-                                .setLocation(Double.parseDouble(args[1]), Double.parseDouble(args[2]), Double.parseDouble(args[3]))
-                                .setScaleData(GenericParticleData.create(20f).build())
-                                .setColorData(ColorParticleData.create(255, 0, 0).build())
-                                .disableCull()
-                                .enableForcedSpawn()
-                                .enableNoClip(),
-                        plr);
-            }
-            case "screenFlash" -> {
-                // /d screenFlash 100 0.01
-                EffeksSender.sendScreenflash(
-                        new ScreenFlashHolder(
-                                Integer.parseInt(args[1]), Float.parseFloat(args[2]),
-                                255, 255, 255
-                        ),
-                        plr
-                );
-            }
             case "randomPacket" -> {
                 CustomPacketSender.getInstance().sendPacket(new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, plr, GlobalUtils.generateRandomString(12), GlobalUtils.generateRandomString(12));
             }
@@ -122,7 +82,12 @@ public class DebugCommand implements CommandExecutor {
             }
             case "fakeException" -> {
                 // /d fakeException <optional: level>
-                ExceptionHandler.getInstance().dealWithException(new RuntimeException("This is a fake exception for debugging purposes."), ((args[1] != null) ? Level.parse(args[1]) : Level.SEVERE), "FAKE_EXCEPTION", log);
+                if (args.length < 2) {
+                    ExceptionHandler.getInstance().dealWithException(new RuntimeException("This is a fake exception for debugging purposes."), Level.SEVERE, "FAKE_EXCEPTION", log);
+
+                } else {
+                    ExceptionHandler.getInstance().dealWithException(new RuntimeException("This is a fake exception for debugging purposes."), Level.parse(args[1]), "FAKE_EXCEPTION", log);
+                }
             }
             default -> plr.sendMessage("Unknown debug command.");
         }

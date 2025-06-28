@@ -64,7 +64,7 @@ public class I18N {
 
     public static String translate(String key, String... args) {
         return ChatColor.translateAlternateColorCodes('&',
-                dev.iseal.sealUtils.systems.I18N.I18N.getTranslation(
+                dev.iseal.sealUtils.systems.I18N.I18N.translate(
                         StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
                                 .getCallerClass(),
                         key, args
