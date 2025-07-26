@@ -6,7 +6,7 @@
 
     <groupId>dev.iseal</groupId>
     <artifactId>SealLib</artifactId>
-    <version>1.1.3.1</version>
+    <version>1.2.0.0</version>
     <packaging>jar</packaging>
 
     <name>SealLib</name>
@@ -17,6 +17,17 @@
         <prerelease>false</prerelease>
         <execute>true</execute>
     </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>iseal.dev</id>
+            <url>https://maven.iseal.dev/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>iseal.dev</id>
+            <url>https://maven.iseal.dev/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <build>
         <plugins>
@@ -89,36 +100,30 @@
     </repositories>
 
     <dependencies>
-        <!--
         <dependency>
             <groupId>dev.iseal</groupId>
             <artifactId>SealUtils</artifactId>
-            <version>1.0.1.3-DEV1</version>
-        </dependency>
-        -->
-        <dependency>
-            <groupId>com.github.iseal56</groupId>
-            <artifactId>SealUtils</artifactId>
-            <version>1.0.1.3</version>
+            <version>1.0.1.4</version>
             <exclusions>
-                <exclusion>
-                    <groupId>io.netty</groupId>
-                    <artifactId>netty-buffer</artifactId>
-                </exclusion>
                 <exclusion>
                     <groupId>org.reflections</groupId>
                     <artifactId>reflections</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>de.javagl</groupId>
-                    <artifactId>obj</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>com.esotericsoftware</groupId>
                     <artifactId>kryo</artifactId>
                 </exclusion>
+
             </exclusions>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.simplix-softworks</groupId>
+            <artifactId>SimplixStorage</artifactId>
+            <version>3.2.7</version>
+        </dependency>
+
+        <!-- For custom packets -->
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-buffer</artifactId>
@@ -140,7 +145,7 @@
         <dependency>
             <groupId>com.esotericsoftware</groupId>
             <artifactId>kryo</artifactId>
-            <version>5.0.0</version>
+            <version>5.6.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -154,18 +159,6 @@
             <artifactId>bstats-bukkit</artifactId>
             <version>3.0.2</version>
             <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>de.javagl</groupId>
-            <artifactId>obj</artifactId>
-            <version>0.4.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-buffer</artifactId>
-            <version>5.0.0.Alpha2</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>

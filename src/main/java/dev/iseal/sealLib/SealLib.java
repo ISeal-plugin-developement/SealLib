@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public final class SealLib extends JavaPlugin {
 
@@ -27,9 +28,11 @@ public final class SealLib extends JavaPlugin {
         config = new Config("config", this.getDataFolder().getPath()+"/config/");
         Bukkit.getServer().getPluginManager().registerEvents(MetricsManager.getInstance(), this);
         debug = config.getOrSetDefault("debug", false);
-        SealUtils.init(debug);
+        SealUtils.init(debug, this.getDescription().getVersion());
         config.setDefault("updaterAllowBeta", false);
         config.setDefault("updaterAllowAlpha", false);
+        Random random = new Random();
+        config.setDefault("analyticsID", "AA-"+random.nextInt(100000000, 999999999)+1);
         if (debug)
             Bukkit.getPluginCommand("debug").setExecutor(new DebugCommand());
         checkSoftDependencies();

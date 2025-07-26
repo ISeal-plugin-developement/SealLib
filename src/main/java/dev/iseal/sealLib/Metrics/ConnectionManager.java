@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 
 public class ConnectionManager {
 
-    private String token = "-1";
     private final Logger l = SealLib.getPlugin().getLogger();
 
     private static ConnectionManager instance;
@@ -23,28 +22,6 @@ public class ConnectionManager {
 
     public String[] sendDataToModrinth(String endpoint) {
         return initConnection("https://api.modrinth.com/v2/" + endpoint, "GET", "", false);
-    }
-
-    public String sendDataToAPI(String endpoint, String payload, String method, boolean requiresAuth) {
-        l.info("A plugin tried to send data to SealLib's API. It has been deprecated. Please warn the developer.");
-        return "DEPRECATED";
-        /*
-        if (SealLib.isDebug()) {
-            l.info("Sending data to the API" + " " + endpoint + " " + payload + " " + method + " " + requiresAuth);
-            return "DEBUG";
-        } else {
-            method = (method == null) ? "POST" : method;
-            if (Objects.equals(token, "-1") && requiresAuth)
-                authenticate();
-            return initConnection("https://analytics.iseal.dev/api/v1/" + endpoint, method, payload, true)[0];
-        }
-         */
-    }
-
-    private void authenticate() {
-        // The endpoint to authenticate the user
-        String endpoint = "auth/getID/";
-        token = initConnection(endpoint, "GET", "", true)[0];
     }
 
     /*
@@ -103,10 +80,6 @@ public class ConnectionManager {
         // Setting the request method
         connection.setRequestMethod(method);
 
-        if (!token.equals("-1"))
-            // Adding token
-            connection.setRequestProperty("Authorization", token);
-
         if (method.equals("POST"))
             // Setting the content type
             connection.setRequestProperty("Content-Type", "application/json");
@@ -121,9 +94,5 @@ public class ConnectionManager {
             out.close(); // Close the stream
         }
         return connection;
-    }
-
-    public void invalidateToken() {
-        token = "-1";
     }
 }

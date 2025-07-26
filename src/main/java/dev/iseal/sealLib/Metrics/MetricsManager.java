@@ -61,7 +61,7 @@ public class MetricsManager implements Listener {
             });
         infoToSendOnExit.forEach((endpoint, info) -> {
             if (info == null) return;
-            ConnectionManager.getInstance().sendDataToAPI(endpoint, info, "POST", true);
+            //ConnectionManager.getInstance().sendDataToAPI(endpoint, info, "POST", true);
         });
     }
 
@@ -91,6 +91,6 @@ public class MetricsManager implements Listener {
 
     public void sendError(String errorMessage, String packageName) {
         Gson gson = new Gson();
-        ConnectionManager.getInstance().sendDataToAPI(packageName+"/errorcodes", gson.toJson(errorMessage), "POST", true);
+        //ConnectionManager.getInstance().sendDataToAPI(packageName+"/errorcodes", gson.toJson(errorMessage), "POST", true);
     }
 }

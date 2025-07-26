@@ -7,11 +7,13 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.MinecraftKey;
+import com.esotericsoftware.kryo.kryo5.Kryo;
 import dev.iseal.sealLib.SealLib;
 import dev.iseal.sealLib.Systems.CustomPackets.Packets.WrapperPlayServerCustomPayload;
 import dev.iseal.sealUtils.systems.serializer.UnsafeSerializer;
 import dev.iseal.sealUtils.utils.ExceptionHandler;
 import org.bukkit.entity.Player;
+import org.checkerframework.checker.units.qual.K;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -32,6 +34,7 @@ public class CustomPacketSender {
 
     private final ProtocolManager protocolManager;
     private static final Logger log = SealLib.getPlugin().getLogger();
+    private static final Kryo kryo = new Kryo();
 
     protected CustomPacketSender() {
         if (!SealLib.isDependencyLoaded("ProtocolLib")) {
@@ -54,7 +57,7 @@ public class CustomPacketSender {
              DataOutputStream dataOutputStream = new DataOutputStream(finalOutputStream)) {
 
             // Terrible practice, but I cannot be bothered to make a decent serializer for this
-            byte[] tempArray = UnsafeSerializer.serialize(extraData);
+            byte[] tempArray = UnsafeSerializer.serialize(kryo, extraData);
 
             if (SealLib.isDebug())
                 SealLib.getPlugin().getLogger().info("Sending packet with extra data size: " + tempArray.length);
@@ -102,6 +105,10 @@ public class CustomPacketSender {
                 consumer.accept(event);
             }
         });
+    }
+
+    public Kryo getKryo() {
+        return kryo;
     }
 
 }
