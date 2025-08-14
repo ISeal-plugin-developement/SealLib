@@ -97,6 +97,10 @@
             <id>blamejared</id>
             <url>https://maven.blamejared.com/</url>
         </repository>
+        <repository>
+            <id>iseal.dev</id>
+            <url>https://maven.iseal.dev/repository/maven-releases/</url>
+        </repository>
     </repositories>
 
     <dependencies>

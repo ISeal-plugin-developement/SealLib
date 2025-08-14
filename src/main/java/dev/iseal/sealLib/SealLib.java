@@ -1,10 +1,14 @@
 package dev.iseal.sealLib;
 
 import de.leonhard.storage.Config;
+import dev.iseal.ExtraKryoCodecs.Enums.SerializersEnums.AnalyticsAPI.AnalyticsSerializers;
+import dev.iseal.ExtraKryoCodecs.Holders.AnalyticsAPI.PluginVersionInfo;
 import dev.iseal.sealLib.Commands.DebugCommand;
 import dev.iseal.sealLib.Metrics.MetricsManager;
 import dev.iseal.sealUtils.SealUtils;
+import dev.iseal.sealUtils.systems.analytics.AnalyticsManager;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -28,15 +32,33 @@ public final class SealLib extends JavaPlugin {
         config = new Config("config", this.getDataFolder().getPath()+"/config/");
         Bukkit.getServer().getPluginManager().registerEvents(MetricsManager.getInstance(), this);
         debug = config.getOrSetDefault("debug", false);
+        boolean metricsEnabled = config.getOrSetDefault("metricsEnabled", true);
         SealUtils.init(debug, this.getDescription().getVersion());
         config.setDefault("updaterAllowBeta", false);
         config.setDefault("updaterAllowAlpha", false);
         Random random = new Random();
-        config.setDefault("analyticsID", "AA-"+random.nextInt(100000000, 999999999)+1);
+        String aaid = config.getOrSetDefault("analyticsID", "AA-"+random.nextInt(100000000, 999999999)+1);
         if (debug)
             Bukkit.getPluginCommand("debug").setExecutor(new DebugCommand());
         checkSoftDependencies();
-        MetricsManager.getInstance().addMetrics(this, 24183);
+        if (metricsEnabled) {
+            MetricsManager.getInstance().addMetrics(this, 24183);
+            AnalyticsManager.INSTANCE.setEnabled("SealLib", true);
+            PluginDescriptionFile pdf = this.getDescription();
+            AnalyticsManager.INSTANCE.sendEvent(
+                aaid,
+                AnalyticsSerializers.PLUGIN_VERSION_INFO,
+                new PluginVersionInfo(
+                    pdf.getVersion(), // pluginVersion
+                    Bukkit.getServer().getVersion(), // serverVersion
+                    Bukkit.getServer().getName(), // serverSoftware
+                    System.getProperty("java.version"), // serverJavaVersion
+                    System.getProperty("os.name"), // serverOS
+                    System.getProperty("os.version"), // serverOSVersion
+                    System.getProperty("os.arch") // serverArchitecture
+                )
+            );
+        }
     }
 
     @Override
