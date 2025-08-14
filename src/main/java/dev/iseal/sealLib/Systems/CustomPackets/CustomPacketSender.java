@@ -7,7 +7,7 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.MinecraftKey;
-import com.esotericsoftware.kryo.kryo5.Kryo;
+import com.esotericsoftware.kryo.Kryo;
 import dev.iseal.sealLib.SealLib;
 import dev.iseal.sealLib.Systems.CustomPackets.Packets.WrapperPlayServerCustomPayload;
 import dev.iseal.sealUtils.systems.serializer.UnsafeSerializer;

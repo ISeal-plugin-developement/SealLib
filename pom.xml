@@ -86,10 +86,6 @@
             <url>https://jitpack.io</url>
         </repository>
         <repository>
-            <id>dmulloy2-repo</id>
-            <url>https://repo.dmulloy2.net/repository/public/</url>
-        </repository>
-        <repository>
             <id>curios</id>
             <url>https://maven.theillusivec4.top/</url>
         </repository>
@@ -153,9 +149,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.comphenix.protocol</groupId>
+            <groupId>net.dmulloy2</groupId>
             <artifactId>ProtocolLib</artifactId>
-            <version>4.7.0</version>
+            <version>5.4.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

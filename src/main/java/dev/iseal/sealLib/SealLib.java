@@ -13,6 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public final class SealLib extends JavaPlugin {
 
@@ -36,8 +37,7 @@ public final class SealLib extends JavaPlugin {
         SealUtils.init(debug, this.getDescription().getVersion());
         config.setDefault("updaterAllowBeta", false);
         config.setDefault("updaterAllowAlpha", false);
-        Random random = new Random();
-        String aaid = config.getOrSetDefault("analyticsID", "AA-"+random.nextInt(100000000, 999999999)+1);
+        String aaid = config.getOrSetDefault("analyticsID", generateAnalyticsId());
         if (debug)
             Bukkit.getPluginCommand("debug").setExecutor(new DebugCommand());
         checkSoftDependencies();
@@ -64,6 +64,11 @@ public final class SealLib extends JavaPlugin {
     @Override
     public void onDisable() {
         MetricsManager.getInstance().exitAndSendInfo();
+    }
+
+    public static String generateAnalyticsId() {
+        int number = ThreadLocalRandom.current().nextInt(0, 1_000_000_000);
+        return String.format("AA-%09d", number);
     }
 
     private void checkSoftDependencies() {
