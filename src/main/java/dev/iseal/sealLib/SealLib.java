@@ -50,6 +50,7 @@ public final class SealLib extends JavaPlugin {
                 AnalyticsSerializers.PLUGIN_VERSION_INFO,
                 new PluginVersionInfo(
                     pdf.getVersion(), // pluginVersion
+                    Bukkit.getBukkitVersion().split("-")[0], // minecraft version
                     Bukkit.getServer().getVersion(), // serverVersion
                     Bukkit.getServer().getName(), // serverSoftware
                     System.getProperty("java.version"), // serverJavaVersion

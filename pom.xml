@@ -6,7 +6,7 @@
 
     <groupId>dev.iseal</groupId>
     <artifactId>SealLib</artifactId>
-    <version>1.2.0.0</version>
+    <version>1.2.0.1</version>
     <packaging>jar</packaging>
 
     <name>SealLib</name>
@@ -95,7 +95,7 @@
         </repository>
         <repository>
             <id>iseal.dev</id>
-            <url>https://maven.iseal.dev/repository/maven-releases/</url>
+            <url>https://maven.iseal.dev/repository/maven-public/</url>
         </repository>
     </repositories>
 
