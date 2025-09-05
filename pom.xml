@@ -103,7 +103,7 @@
         <dependency>
             <groupId>dev.iseal</groupId>
             <artifactId>SealUtils</artifactId>
-            <version>1.0.1.4</version>
+            <version>1.0.1.5</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.reflections</groupId>
