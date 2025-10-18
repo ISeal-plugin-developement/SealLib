@@ -20,4 +20,8 @@ public abstract class Pattern {
         gui.setComponent(slots, component);
     }
 
+    public void apply(AbstractGui gui, Component component) {
+        applyPattern(gui, component);
+    }
+
 }

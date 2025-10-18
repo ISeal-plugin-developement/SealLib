@@ -11,11 +11,15 @@ import java.util.stream.IntStream;
 public class MarchingAntsBorderPattern extends AnimatedPattern {
 
     public MarchingAntsBorderPattern(int width, int height) {
-        super(generateFrames(width, height));
+        this(width, height, 10);
+    }
+
+    public MarchingAntsBorderPattern(int width, int height, int updateIntervalTicks) {
+        super(generateFrames(width, height), updateIntervalTicks);
     }
 
     private static List<List<Integer>> generateFrames(int width, int height) {
-        List<Integer> borderSlots = GuiPatternUtils.border(width, height);
+        List<Integer> borderSlots = GuiPatternUtils.getOrderedBorderSlots(width, height); // ordered
         List<List<Integer>> frames = new ArrayList<>();
         frames.add(IntStream.range(0, borderSlots.size())
                 .filter(i -> i % 2 == 0)

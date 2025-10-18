@@ -13,7 +13,6 @@ import dev.iseal.sealLib.Systems.CustomPackets.Packets.WrapperPlayServerCustomPa
 import dev.iseal.sealUtils.systems.serializer.UnsafeSerializer;
 import dev.iseal.sealUtils.utils.ExceptionHandler;
 import org.bukkit.entity.Player;
-import org.checkerframework.checker.units.qual.K;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -47,7 +46,7 @@ public class CustomPacketSender {
         * Send a packet to a player
         * The packet is sent with the extra data at the front.
         * NOTE: The extra data is serialized with UnsafeSerializer
-        * NOTE: The total lenght of the packet is attached to the start.
+        * NOTE: The total length of the packet is attached to the start.
      */
     public void sendPacket(byte[] packet, Player receiver, String prefix, String channel, Object... extraData) {
         WrapperPlayServerCustomPayload customPayload = new WrapperPlayServerCustomPayload();

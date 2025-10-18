@@ -5,6 +5,7 @@ import dev.iseal.ExtraKryoCodecs.Enums.SerializersEnums.AnalyticsAPI.AnalyticsSe
 import dev.iseal.ExtraKryoCodecs.Holders.AnalyticsAPI.PluginVersionInfo;
 import dev.iseal.sealLib.Commands.DebugCommand;
 import dev.iseal.sealLib.Metrics.MetricsManager;
+import dev.iseal.sealLib.Systems.Gui.listeners.InventoryListener;
 import dev.iseal.sealUtils.SealUtils;
 import dev.iseal.sealUtils.systems.analytics.AnalyticsManager;
 import org.bukkit.Bukkit;
@@ -32,6 +33,7 @@ public final class SealLib extends JavaPlugin {
         plugin = this;
         config = new Config("config", this.getDataFolder().getPath()+"/config/");
         Bukkit.getServer().getPluginManager().registerEvents(MetricsManager.getInstance(), this);
+        getServer().getPluginManager().registerEvents(new InventoryListener(), this);
         debug = config.getOrSetDefault("debug", false);
         boolean metricsEnabled = config.getOrSetDefault("metricsEnabled", true);
         SealUtils.init(debug, this.getDescription().getVersion());

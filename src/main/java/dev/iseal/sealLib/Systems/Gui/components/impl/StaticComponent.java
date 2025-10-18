@@ -7,15 +7,12 @@ import java.util.UUID;
 
 public class StaticComponent extends Component {
 
-    private final ItemStack item;
-
     public StaticComponent(ItemStack stack) {
-        super(UUID.randomUUID());
-        this.item = stack;
+        super(stack, UUID.randomUUID());
     }
 
     @Override
     public ItemStack render() {
-        return item;
+        return getItem();
     }
 }

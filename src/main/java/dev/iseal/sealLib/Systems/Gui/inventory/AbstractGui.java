@@ -7,6 +7,9 @@ import lombok.Setter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
+import dev.iseal.sealLib.Systems.Gui.patterns.AnimatedPattern;
+import dev.iseal.sealLib.Systems.Gui.patterns.Pattern;
+import dev.iseal.sealLib.Systems.Gui.patterns.PatternApplier;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,6 +23,7 @@ public abstract class AbstractGui {
     private final Inventory inventory;
     private final boolean allowMovement;
     private final Map<Integer, Component> components = new HashMap<>();
+    private final PatternApplier patternApplier = new PatternApplier(this);
     private final int width;
     private final int height;
 
@@ -30,14 +34,17 @@ public abstract class AbstractGui {
         this.allowMovement = allowMovement;
     }
 
-    /**
-     * Opens the GUI for the player. Remember to override this method in your implementation.
-     * @param player The player to open the GUI for.
-     */
     public void open(Player player) {
         renderComponents();
         player.openInventory(this.getInventory());
         InventoryManager.INSTANCE.addOpenInventory(player, this);
+    }
+
+    public void close(Player player) {
+        // stop any pattern scheduling for this GUI to avoid leaked tasks
+        patternApplier.stop();
+        player.closeInventory();
+        InventoryManager.INSTANCE.removeOpenInventory(player);
     }
 
     /**
@@ -74,6 +81,24 @@ public abstract class AbstractGui {
     }
 
     /**
+     * Applies a static pattern to the GUI.
+     * @param pattern The pattern to apply.
+     * @param component The component to use for the pattern.
+     */
+    public void applyPattern(Pattern pattern, Component component) {
+        pattern.apply(this, component);
+    }
+
+    /**
+     * Applies an animated pattern to the GUI.
+     * @param pattern The animated pattern to apply.
+     * @param component The component to use for the pattern.
+     */
+    public void applyPattern(AnimatedPattern pattern, Component component) {
+        patternApplier.addPattern(pattern, component);
+    }
+
+    /**
      * Removes a component from a specific slot in the GUI.
      * @param slot The slot to remove the component from.
      */
@@ -91,6 +116,14 @@ public abstract class AbstractGui {
             throw new IndexOutOfBoundsException("Coordinates (" + x + ", " + y + ") are out of bounds for a " + width + "x" + height + " GUI.");
         }
         removeComponent(y * width + x);
+    }
+
+    /**
+     * Clears an item from a specific slot in the inventory.
+     * @param slot The slot to clear.
+     */
+    public void clearSlot(int slot) {
+        inventory.setItem(slot, null);
     }
 
     /**
@@ -143,9 +176,15 @@ public abstract class AbstractGui {
      * Renders all components in the GUI.
      */
     public void renderComponents() {
-        components.forEach((slot, component) ->
-            inventory.setItem(slot, component.render())
-        );
+        patternApplier.updatePatterns();
+        for (int i = 0; i < inventory.getSize(); i++) {
+            Component component = components.get(i);
+            if (component != null) {
+                inventory.setItem(i, component.render());
+            } else {
+                inventory.setItem(i, null);
+            }
+        }
     }
 
     /**

@@ -9,7 +9,11 @@ import java.util.List;
 public class SweepingBorderPattern extends AnimatedPattern {
 
     public SweepingBorderPattern(int width, int height) {
-        super(generateFrames(width, height));
+        this(width, height, 10);
+    }
+
+    public SweepingBorderPattern(int width, int height, int updateIntervalTicks) {
+        super(generateFrames(width, height), updateIntervalTicks);
     }
 
     private static List<List<Integer>> generateFrames(int width, int height) {
@@ -21,4 +25,3 @@ public class SweepingBorderPattern extends AnimatedPattern {
         return frames;
     }
 }
-

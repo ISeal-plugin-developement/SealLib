@@ -1,5 +1,6 @@
 package dev.iseal.sealLib.Systems.Gui.components.abstr;
 
+import dev.iseal.sealLib.Utils.TickCounter;
 import lombok.Getter;
 import org.bukkit.inventory.ItemStack;
 
@@ -12,24 +13,24 @@ public abstract class AnimatedComponent extends Component {
     private final List<ItemStack> frames;
     private int currentFrame = 0;
     private long lastUpdate;
-    private final long updateInterval;
+    private final long updateIntervalTicks;
 
-    protected AnimatedComponent(List<ItemStack> frames, UUID id, long updateIntervalMs) {
-        super(id);
+    protected AnimatedComponent(List<ItemStack> frames, UUID id, int updateIntervalTicks) {
+        super((frames == null || frames.isEmpty()) ? null : frames.get(0), id);
         if (frames == null || frames.isEmpty()) {
             throw new IllegalArgumentException("Frames cannot be null or empty.");
         }
         this.frames = frames;
-        this.updateInterval = updateIntervalMs;
-        this.lastUpdate = System.currentTimeMillis();
+        this.updateIntervalTicks = updateIntervalTicks;
+        this.lastUpdate = TickCounter.getCurrentTick();
     }
 
     @Override
     public ItemStack render() {
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastUpdate >= updateInterval) {
+        long currentTick = TickCounter.getCurrentTick();
+        if (currentTick - lastUpdate >= updateIntervalTicks) {
             currentFrame = (currentFrame + 1) % frames.size();
-            lastUpdate = currentTime;
+            lastUpdate = currentTick;
         }
         return frames.get(currentFrame);
     }

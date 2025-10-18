@@ -6,13 +6,15 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 
-@FieldDefaults(makeFinal = true, level = lombok.AccessLevel.PROTECTED)
+@FieldDefaults(level = lombok.AccessLevel.PROTECTED)
 @Getter
 public abstract class Component {
 
     UUID id;
+    ItemStack item;
 
-    protected Component(UUID id) {
+    protected Component(ItemStack item, UUID id) {
+        this.item = item;
         this.id = id;
     }
 

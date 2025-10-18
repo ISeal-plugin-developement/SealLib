@@ -2,6 +2,14 @@ package dev.iseal.sealLib.Commands;
 
 import dev.iseal.sealLib.SealLib;
 import dev.iseal.sealLib.Systems.CustomPackets.CustomPacketSender;
+import dev.iseal.sealLib.Systems.Gui.components.impl.ButtonComponent;
+import dev.iseal.sealLib.Systems.Gui.components.impl.StaticComponent;
+import dev.iseal.sealLib.Systems.Gui.inventory.impl.ChestGui;
+import dev.iseal.sealLib.Systems.Gui.inventory.impl.PagedGui;
+import dev.iseal.sealLib.Systems.Gui.patterns.impl.BorderPattern;
+import dev.iseal.sealLib.Systems.Gui.patterns.impl.LoopingBorderPattern;
+import dev.iseal.sealLib.Systems.Gui.patterns.impl.MarchingAntsBorderPattern;
+import dev.iseal.sealLib.Systems.Gui.patterns.impl.SweepingBorderPattern;
 import dev.iseal.sealLib.Utils.BlockDisplayUtil;
 import dev.iseal.sealLib.Utils.SpigotGlobalUtils;
 import dev.iseal.sealLib.Utils.ModelRenderer;
@@ -16,6 +24,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.List;
@@ -34,6 +43,39 @@ public class DebugCommand implements CommandExecutor {
         }
 
         switch (args[0]) {
+            case "gui" -> {
+                if (args.length < 2) {
+                    plr.sendMessage("Usage: /d gui <simple|paged|animated>");
+                    return true;
+                }
+                switch (args[1]) {
+                    case "simple" -> {
+                        ChestGui gui = new ChestGui(3, "Simple GUI");
+                        gui.applyPattern(new BorderPattern(9, 3), new StaticComponent(new ItemStack(Material.GRAY_STAINED_GLASS_PANE)));
+                        gui.setComponent(13, new ButtonComponent(new ItemStack(Material.DIAMOND), (player, clickType) -> {
+                            player.sendMessage("You clicked the diamond!");
+                            player.closeInventory();
+                            return true;
+                        }));
+                        gui.open(plr);
+                    }
+                    case "paged" -> {
+                        PagedGui pagedGui = new PagedGui(5, "Paged GUI");
+                        for (int i = 0; i < 50; i++) {
+                            pagedGui.addPageItem(new StaticComponent(new ItemStack(Material.DIRT, i + 1)));
+                        }
+                        pagedGui.open(plr);
+                    }
+                    case "animated" -> {
+                        ChestGui animatedGui = new ChestGui(6, "Animated Patterns");
+                        animatedGui.applyPattern(new MarchingAntsBorderPattern(9, 6, 10), new StaticComponent(new ItemStack(Material.RED_STAINED_GLASS_PANE)));
+                        animatedGui.applyPattern(new LoopingBorderPattern(7, 4, 10), new StaticComponent(new ItemStack(Material.BLUE_STAINED_GLASS_PANE)));
+                        animatedGui.applyPattern(new SweepingBorderPattern(5, 2, 10), new StaticComponent(new ItemStack(Material.LIME_STAINED_GLASS_PANE)));
+                        animatedGui.open(plr);
+                    }
+                    default -> plr.sendMessage("Unknown gui command: " + args[1]);
+                }
+            }
             case "renderer" -> Bukkit.getScheduler().runTaskAsynchronously(SealLib.getPlugin(), () -> {
                 long time = System.currentTimeMillis();
                 World world = plr.getWorld();
