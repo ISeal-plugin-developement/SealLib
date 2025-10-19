@@ -1,6 +1,5 @@
-package dev.iseal.sealLib.Updater;
+package dev.iseal.sealLib.Systems.Updater;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import dev.iseal.sealLib.Metrics.ConnectionManager;
@@ -15,9 +14,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.logging.Logger;

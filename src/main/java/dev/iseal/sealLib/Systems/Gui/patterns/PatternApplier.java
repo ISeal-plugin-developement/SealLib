@@ -22,7 +22,13 @@ public class PatternApplier {
 
     public void addPattern(AnimatedPattern pattern, Component component) {
         animatedPatterns.put(pattern, component);
-        pattern.applyPattern(gui, component);
+        if (component != null) {
+            pattern.applyPattern(gui, component);
+        } else {
+            // for patterns that manage their own components
+            // also, this assumes that if component is null, the pattern handles its own components. if it doesn't, fuck you.
+            pattern.apply(gui, null);
+        }
         ensureTaskRunning();
     }
 
@@ -31,6 +37,13 @@ public class PatternApplier {
 
         animatedPatterns.forEach((pattern, component) -> {
             List<Integer> previousFrameSlots = pattern.nextFrame(gui, component);
+
+            // If component is null the pattern manages its own components/clearing,
+            // so don't attempt to clear slots here.
+            if (component == null) {
+                return;
+            }
+
             for (Integer slot : previousFrameSlots) {
                 // only clear the slot if the component hasn't been replaced by something else
                 if (gui.getComponent(slot).map(c -> c.equals(component)).orElse(false)) {

@@ -10,9 +10,15 @@ import java.util.List;
 public abstract class Pattern {
 
     protected final List<Integer> slots;
+    protected final int borderOffset;
 
     public Pattern(List<Integer> slots) {
+        this(slots, 0);
+    }
+    
+    public Pattern(List<Integer> slots, int borderOffset) {
         this.slots = slots;
+        this.borderOffset = borderOffset;
     }
 
     public void applyPattern(AbstractGui gui, Component component) {

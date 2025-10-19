@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.BlockDisplay;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
 import org.joml.Quaternionf;
@@ -30,5 +31,20 @@ public class BlockDisplayUtil {
             Location vertexLocation = location.clone().add(vertex);
             createBlockDisplay(world, vertexLocation, material, scale);
         }
+    }
+    
+    /**
+     * Render model with optimization - delegates to OptimizedBlockDisplayUtil
+     */
+    public static void renderOptimizedModel(Location location, List<Vector> vertices, Material material, float scale) {
+        OptimizedBlockDisplayUtil.renderOptimizedModel(location, vertices, material, scale);
+    }
+    
+    /**
+     * Render model with level of detail based on viewer distance
+     */
+    public static void renderModelWithLOD(Location location, List<Vector> vertices, Material material, 
+                                         float scale, Player viewer, double maxDistance) {
+        OptimizedBlockDisplayUtil.renderModelWithLOD(location, vertices, material, scale, viewer, maxDistance);
     }
 }

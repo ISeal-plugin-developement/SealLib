@@ -13,6 +13,7 @@ import dev.iseal.sealLib.Systems.Gui.patterns.PatternApplier;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -96,6 +97,44 @@ public abstract class AbstractGui {
      */
     public void applyPattern(AnimatedPattern pattern, Component component) {
         patternApplier.addPattern(pattern, component);
+    }
+
+    /**
+     * Applies an animated pattern that uses multiple components.
+     * @param pattern The animated pattern to apply.
+     */
+    public void applyPattern(AnimatedPattern pattern) {
+        patternApplier.addPattern(pattern, null);
+    }
+
+    /**
+     * Apply multiple animated patterns in one call.
+     * Draw order follows the iteration order of the provided map: later entries will overwrite
+     * earlier entries where they overlap. If you need deterministic ordering, pass a LinkedHashMap.
+     *
+     * Example:
+     *   Map<AnimatedPattern, Component> map = new LinkedHashMap<>();
+     *   map.put(patternA, compA); // drawn first
+     *   map.put(patternB, compB); // drawn after, overwrites overlaps
+     *   gui.applyPatterns(map);
+     *
+     * @param patterns map of pattern -> component (use null component for multi-component patterns)
+     */
+    public void applyPatterns(Map<AnimatedPattern, Component> patterns) {
+        if (patterns == null || patterns.isEmpty()) return;
+        patterns.forEach(this::applyPattern);
+    }
+
+    /**
+     * Convenience: apply multiple patterns (registered in iteration order).
+     * Each pattern is added with a null component (useful for multi-component patterns),
+     * or replace with applyPattern(pattern, component) for single-component usage.
+     */
+    public void applyPatterns(AnimatedPattern... patterns) {
+        if (patterns == null || patterns.length == 0) return;
+        for (AnimatedPattern p : patterns) {
+            applyPattern(p);
+        }
     }
 
     /**

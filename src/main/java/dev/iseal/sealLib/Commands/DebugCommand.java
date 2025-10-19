@@ -68,9 +68,37 @@ public class DebugCommand implements CommandExecutor {
                     }
                     case "animated" -> {
                         ChestGui animatedGui = new ChestGui(6, "Animated Patterns");
-                        animatedGui.applyPattern(new MarchingAntsBorderPattern(9, 6, 10), new StaticComponent(new ItemStack(Material.RED_STAINED_GLASS_PANE)));
-                        animatedGui.applyPattern(new LoopingBorderPattern(7, 4, 10), new StaticComponent(new ItemStack(Material.BLUE_STAINED_GLASS_PANE)));
-                        animatedGui.applyPattern(new SweepingBorderPattern(5, 2, 10), new StaticComponent(new ItemStack(Material.LIME_STAINED_GLASS_PANE)));
+
+                        // Use offset 0 (outer border) for marching ants
+                        MarchingAntsBorderPattern marchingPattern = new MarchingAntsBorderPattern(9, 6, 10, 0,
+                                new StaticComponent(new ItemStack(Material.RED_STAINED_GLASS_PANE)),
+                                new StaticComponent(new ItemStack(Material.BLUE_STAINED_GLASS_PANE))
+                        );
+
+                        // Use offset 1 (inner border) for sweeping pattern
+                        SweepingBorderPattern sweepingPattern = new SweepingBorderPattern(9, 6, 1, 1);
+                        sweepingPattern.setComponents(
+                                new StaticComponent(new ItemStack(Material.GREEN_STAINED_GLASS_PANE)),
+                                new StaticComponent(new ItemStack(Material.YELLOW_STAINED_GLASS_PANE))
+                        );
+
+                        LoopingBorderPattern loopingPattern = new LoopingBorderPattern(9, 6, 5, 2);
+
+                        if (args.length > 2) {
+                            switch (args[2]) {
+                                case "marching" -> animatedGui.applyPattern(marchingPattern);
+                                case "sweeping" -> animatedGui.applyPattern(sweepingPattern);
+                                case "looping" -> animatedGui.applyPattern(loopingPattern);
+                                case "all" -> {
+                                    animatedGui.applyPatterns(marchingPattern, sweepingPattern);
+                                    animatedGui.applyPattern(loopingPattern, new StaticComponent(new ItemStack(Material.PURPLE_STAINED_GLASS_PANE)));
+                                }
+                                default -> animatedGui.applyPattern(sweepingPattern);
+                            }
+                        } else {
+                            animatedGui.applyPattern(sweepingPattern);
+                        }
+
                         animatedGui.open(plr);
                     }
                     default -> plr.sendMessage("Unknown gui command: " + args[1]);
@@ -99,6 +127,63 @@ public class DebugCommand implements CommandExecutor {
                     );
 
                     plr.sendMessage("Done in " + (System.currentTimeMillis() - time) + "ms");
+
+                } catch (Exception ex) {
+                    ExceptionHandler.getInstance().dealWithException(ex, Level.WARNING, "SPAWNING_DEBUG_PARTICLES", log);
+                }
+            });
+            case "optimizedRenderer" -> Bukkit.getScheduler().runTaskAsynchronously(SealLib.getPlugin(), () -> {
+                long time = System.currentTimeMillis();
+                World world = plr.getWorld();
+                Location location = new Location(world, Float.parseFloat(args[5]), Float.parseFloat(args[6]), Float.parseFloat(args[7]));
+
+                try {
+                    float precision = Float.parseFloat(args[1]);
+                    float scale = Float.parseFloat(args[2]);
+                    float blockScale = Float.parseFloat(args[3]);
+                    float rotationAngle = Float.parseFloat(args[4]);
+
+                    List<Vector> points = ModelRenderer.getVectors(
+                            SealLib.getPlugin().getDataFolder().getAbsolutePath() + "/models/"+args[8]+".obj",
+                            scale,
+                            rotationAngle,
+                            precision
+                    );
+
+                    Bukkit.getScheduler().runTask(SealLib.getPlugin(), () ->
+                            BlockDisplayUtil.renderOptimizedModel(location, points, Material.STONE, blockScale)
+                    );
+
+                    plr.sendMessage("Done in " + (System.currentTimeMillis() - time) + "ms with optimized renderer");
+
+                } catch (Exception ex) {
+                    ExceptionHandler.getInstance().dealWithException(ex, Level.WARNING, "SPAWNING_DEBUG_PARTICLES", log);
+                }
+            });
+            case "lodRenderer" -> Bukkit.getScheduler().runTaskAsynchronously(SealLib.getPlugin(), () -> {
+                long time = System.currentTimeMillis();
+                World world = plr.getWorld();
+                Location location = new Location(world, Float.parseFloat(args[5]), Float.parseFloat(args[6]), Float.parseFloat(args[7]));
+                double maxDistance = args.length > 8 ? Double.parseDouble(args[8]) : 50.0;
+
+                try {
+                    float precision = Float.parseFloat(args[1]);
+                    float scale = Float.parseFloat(args[2]);
+                    float blockScale = Float.parseFloat(args[3]);
+                    float rotationAngle = Float.parseFloat(args[4]);
+
+                    List<Vector> points = ModelRenderer.getVectors(
+                            SealLib.getPlugin().getDataFolder().getAbsolutePath() + "/models/"+args[9]+".obj",
+                            scale,
+                            rotationAngle,
+                            precision
+                    );
+
+                    Bukkit.getScheduler().runTask(SealLib.getPlugin(), () ->
+                            BlockDisplayUtil.renderModelWithLOD(location, points, Material.STONE, blockScale, plr, maxDistance)
+                    );
+
+                    plr.sendMessage("Done in " + (System.currentTimeMillis() - time) + "ms with LOD renderer");
 
                 } catch (Exception ex) {
                     ExceptionHandler.getInstance().dealWithException(ex, Level.WARNING, "SPAWNING_DEBUG_PARTICLES", log);

@@ -1,43 +1,93 @@
 package dev.iseal.sealLib.Systems.Gui.patterns;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class GuiPatternUtils {
 
-    public static List<Integer> border(int width, int height) {
-        Set<Integer> borderSlots = new HashSet<>();
-        if (height <= 0 || width <= 0) return new ArrayList<>();
-        // Top and bottom rows
-        for (int i = 0; i < width; i++) {
-            borderSlots.add(i); // Top
-            borderSlots.add(width * (height - 1) + i); // Bottom
-        }
-        // Left and right columns
-        for (int i = 0; i < height; i++) {
-            borderSlots.add(i * width); // Left
-            borderSlots.add(i * width + width - 1); // Right
-        }
-        return new ArrayList<>(borderSlots);
+    /**
+     * Gets all slots that form a border of the GUI.
+     * @param width Width of the GUI
+     * @param height Height of the GUI
+     * @return List of slot indices forming the border
+     */
+    public static List<Integer> getBorderSlots(int width, int height) {
+        return getBorderSlots(width, height, 0);
     }
 
-    public static List<Integer> getOrderedBorderSlots(int width, int height) {
-        List<Integer> borderSlots = new ArrayList<>();
-        if (height <= 0 || width <= 0) return borderSlots;
-        // Top row
-        for (int i = 0; i < width; i++) borderSlots.add(i);
-        if (height > 1) {
-            // Right column
-            for (int i = 1; i < height; i++) borderSlots.add(i * width + width - 1);
-            if (width > 1) {
-                // Bottom row (reversed)
-                for (int i = width - 2; i >= 0; i--) borderSlots.add(width * (height - 1) + i);
-                // Left column (reversed)
-                for (int i = height - 2; i > 0; i--) borderSlots.add(i * width);
-            }
+    /**
+     * Gets all slots that form a border of the GUI with a specified offset.
+     * @param width Width of the GUI
+     * @param height Height of the GUI
+     * @param offset Number of slots to offset from the edge (0 = outermost border)
+     * @return List of slot indices forming the border
+     */
+    public static List<Integer> getBorderSlots(int width, int height, int offset) {
+        List<Integer> slots = new ArrayList<>();
+        
+        if (offset >= width / 2 || offset >= height / 2) {
+            throw new IllegalArgumentException("Offset too large for GUI dimensions");
         }
-        return borderSlots;
+        
+        // Top and bottom rows
+        for (int x = offset; x < width - offset; x++) {
+            slots.add(offset * width + x);                       // Top row
+            slots.add((height - 1 - offset) * width + x);        // Bottom row
+        }
+        
+        // Left and right columns (excluding corners which were added above)
+        for (int y = offset + 1; y < height - 1 - offset; y++) {
+            slots.add(y * width + offset);                       // Left column
+            slots.add(y * width + (width - 1 - offset));         // Right column
+        }
+        
+        return slots;
+    }
+
+    /**
+     * Gets border slots in a specific order, starting from top-left and going clockwise.
+     * @param width Width of the GUI
+     * @param height Height of the GUI
+     * @return Ordered list of border slot indices
+     */
+    public static List<Integer> getOrderedBorderSlots(int width, int height) {
+        return getOrderedBorderSlots(width, height, 0);
+    }
+
+    /**
+     * Gets border slots in a specific order with a specified offset, starting from top-left and going clockwise.
+     * @param width Width of the GUI
+     * @param height Height of the GUI
+     * @param offset Number of slots to offset from the edge (0 = outermost border)
+     * @return Ordered list of border slot indices
+     */
+    public static List<Integer> getOrderedBorderSlots(int width, int height, int offset) {
+        List<Integer> slots = new ArrayList<>();
+        
+        if (offset >= width / 2 || offset >= height / 2) {
+            throw new IllegalArgumentException("Offset too large for GUI dimensions");
+        }
+        
+        // Top row (left to right)
+        for (int x = offset; x < width - offset; x++) {
+            slots.add(offset * width + x);
+        }
+        
+        // Right column (top to bottom, excluding top-right corner)
+        for (int y = offset + 1; y < height - offset; y++) {
+            slots.add(y * width + (width - 1 - offset));
+        }
+        
+        // Bottom row (right to left, excluding bottom-right corner)
+        for (int x = width - 2 - offset; x >= offset; x--) {
+            slots.add((height - 1 - offset) * width + x);
+        }
+        
+        // Left column (bottom to top, excluding corners)
+        for (int y = height - 2 - offset; y > offset; y--) {
+            slots.add(y * width + offset);
+        }
+        
+        return slots;
     }
 }
